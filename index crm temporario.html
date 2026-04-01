@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestCRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg:#0f1117;--bg2:#161820;--bg3:#1e2030;--surface:#252838;--surface2:#2d3148;
+      --border:#363a55;--border2:#424666;--text:#e8eaf2;--text2:#9ea3c0;--text3:#6b7096;
+      --accent:#5b7fff;--accent2:#7b9bff;--accent-glow:#5b7fff33;
+      --green:#3ecf8e;--green-bg:#3ecf8e18;--yellow:#f5a623;--yellow-bg:#f5a62318;
+      --red:#ff5b5b;--red-bg:#ff5b5b18;--purple:#a78bfa;--purple-bg:#a78bfa18;
+      --radius:12px;--radius-sm:8px;--shadow:0 4px 24px #00000044;
+      --font-body:'DM Sans',sans-serif;--font-display:'DM Serif Display',serif;
+      --sidebar-w:240px;--topbar-h:60px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:15px;}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;}
+    button{cursor:pointer;font-family:var(--font-body);}
+    input,textarea,select{font-family:var(--font-body);}
+    a{color:inherit;text-decoration:none;}
+    ::-webkit-scrollbar{width:6px;height:6px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      position:fixed;inset:0;background:var(--bg);z-index:9999;
+      display:flex;align-items:center;justify-content:center;
+    }
+    #login-screen.hidden{display:none;}
+    .login-box{
+      background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+      padding:40px;width:100%;max-width:400px;box-shadow:0 24px 80px #000000aa;
+    }
+    .login-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px;justify-content:center;}
+    .login-logo .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px var(--accent-glow);}
+    .login-logo .logo-text{font-family:var(--font-display);font-size:1.5rem;letter-spacing:-0.02em;}
+    .login-logo .logo-text span{color:var(--accent2);}
+    .login-title{font-size:0.88rem;color:var(--text3);text-align:center;margin-bottom:24px;}
+    .login-users{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+    .login-user-btn{
+      display:flex;align-items:center;gap:12px;padding:12px 14px;
+      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
+      color:var(--text);font-size:0.88rem;font-weight:500;transition:all 0.15s;text-align:left;
+    }
+    .login-user-btn:hover{border-color:var(--accent);background:var(--accent-glow);}
+    .login-user-btn .u-avatar{
+      width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    .login-user-btn .u-role{font-size:0.72rem;color:var(--text3);margin-top:1px;}
+    .login-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+    .login-new{
+      display:flex;align-items:center;gap:8px;padding:10px 14px;
+      background:none;border:1px dashed var(--border2);border-radius:var(--radius-sm);
+      color:var(--text3);font-size:0.82rem;width:100%;justify-content:center;transition:all 0.15s;
+    }
+    .login-new:hover{border-color:var(--accent);color:var(--accent2);}
+
+    /* ── SIDEBAR ── */
+    .sidebar{
+      width:var(--sidebar-w);min-height:100vh;background:var(--bg2);
+      border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;z-index:100;
+    }
+    .sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);}
+    .sidebar-logo .logo-mark{display:flex;align-items:center;gap:10px;}
+    .logo-icon{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 18px var(--accent-glow);}
+    .logo-text{font-family:var(--font-display);font-size:1.2rem;letter-spacing:-0.02em;color:var(--text);}
+    .logo-text span{color:var(--accent2);}
+    .sidebar-section{padding:18px 12px 8px;}
+    .sidebar-section-label{font-size:0.68rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);padding:0 8px;margin-bottom:6px;}
+    .sidebar-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+    .sidebar-nav li button{
+      width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;
+      border-radius:var(--radius-sm);background:none;border:none;color:var(--text2);
+      font-size:0.88rem;font-weight:400;transition:all 0.15s;text-align:left;
+    }
+    .sidebar-nav li button:hover{background:var(--surface);color:var(--text);}
+    .sidebar-nav li button.active{background:var(--accent-glow);color:var(--accent2);font-weight:500;}
+    .sidebar-nav li button .nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+    .sidebar-nav li button .nav-badge{
+      margin-left:auto;background:var(--red);color:#fff;
+      font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center;
+    }
+    .sidebar-nav li button .nav-badge.green{background:var(--green);}
+    .sidebar-footer{margin-top:auto;padding:16px 12px;border-top:1px solid var(--border);}
+    .sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);}
+    .user-avatar{
+      width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    .user-info .user-name{font-size:0.82rem;font-weight:500;}
+    .user-info .user-role{font-size:0.72rem;color:var(--text3);}
+    .btn-logout{
+      margin-top:6px;width:100%;background:none;border:none;color:var(--text3);
+      font-size:0.75rem;padding:5px 10px;border-radius:var(--radius-sm);text-align:left;transition:all 0.15s;
+    }
+    .btn-logout:hover{color:var(--red);background:var(--red-bg);}
+
+    /* ── MAIN ── */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+    .topbar{
+      height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;
+    }
+    .topbar-title{font-family:var(--font-display);font-size:1.15rem;letter-spacing:-0.02em;}
+    .topbar-title .sub{font-size:0.78rem;font-family:var(--font-body);color:var(--text3);font-weight:400;margin-left:4px;}
+    .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:10px;}
+
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-sm);font-size:0.85rem;font-weight:500;border:none;transition:all 0.15s;}
+    .btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 18px var(--accent-glow);}
+    .btn-primary:hover{background:var(--accent2);}
+    .btn-ghost{background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--surface2);color:var(--text);}
+    .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #ff5b5b33;}
+    .btn-danger:hover{background:#ff5b5b28;}
+    .btn-sm{padding:5px 11px;font-size:0.78rem;}
+    .btn-icon{padding:7px;width:34px;height:34px;justify-content:center;}
+
+    .page-content{flex:1;overflow-y:auto;overflow-x:hidden;}
+    .page{display:none;}
+    .page.active{display:flex;flex-direction:column;height:100%;}
+
+    /* ── DASHBOARD ── */
+    .dashboard-grid{padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+    @media(max-width:1200px){.dashboard-grid{grid-template-columns:repeat(2,1fr);}}
+    .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;opacity:0.07;}
+    .stat-card.accent::before{background:var(--accent);}
+    .stat-card.green::before{background:var(--green);}
+    .stat-card.yellow::before{background:var(--yellow);}
+    .stat-card.red::before{background:var(--red);}
+    .stat-label{font-size:0.78rem;color:var(--text3);font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;}
+    .stat-value{font-size:1.9rem;font-weight:700;letter-spacing:-0.03em;line-height:1;}
+    .stat-sub{font-size:0.75rem;color:var(--text3);margin-top:6px;}
+    .stat-icon{position:absolute;top:18px;right:18px;font-size:1.4rem;opacity:0.5;}
+    .dashboard-lower{padding:0 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:900px){.dashboard-lower{grid-template-columns:1fr;}}
+    .panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+    .panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .panel-title{font-size:0.88rem;font-weight:600;}
+    .panel-body{padding:16px 20px;}
+    .today-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+    .today-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);}
+    .today-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .today-dot.red{background:var(--red);box-shadow:0 0 6px var(--red);}
+    .today-dot.yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow);}
+    .today-dot.green{background:var(--green);box-shadow:0 0 6px var(--green);}
+    .today-name{font-size:0.85rem;font-weight:500;flex:1;}
+    .today-info{font-size:0.75rem;color:var(--text3);}
+    .today-tag{font-size:0.68rem;padding:3px 8px;border-radius:99px;font-weight:600;}
+    .tag-red{background:var(--red-bg);color:var(--red);}
+    .tag-yellow{background:var(--yellow-bg);color:var(--yellow);}
+    .tag-green{background:var(--green-bg);color:var(--green);}
+    .tag-blue{background:var(--accent-glow);color:var(--accent2);}
+    .tag-purple{background:var(--purple-bg);color:var(--purple);}
+
+    /* ── EQUIPE PAGE ── */
+    .equipe-content{padding:24px;display:flex;flex-direction:column;gap:20px;}
+    .equipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+    .member-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+      padding:20px;transition:all 0.15s;
+    }
+    .member-card:hover{border-color:var(--border2);box-shadow:var(--shadow-sm);}
+    .member-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    .member-avatar{
+      width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:1rem;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    .member-name{font-size:0.92rem;font-weight:600;}
+    .member-role{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+    .member-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .mstat{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;}
+    .mstat-val{font-size:1.1rem;font-weight:700;color:var(--accent2);}
+    .mstat-lbl{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+    .member-actions{display:flex;gap:6px;margin-top:12px;}
+    .member-badge{
+      display:inline-flex;align-items:center;gap:5px;padding:3px 8px;
+      border-radius:99px;font-size:0.68rem;font-weight:600;margin-bottom:10px;
+    }
+    .badge-gestor{background:var(--yellow-bg);color:var(--yellow);}
+    .badge-assessor{background:var(--accent-glow);color:var(--accent2);}
+
+    /* ── KANBAN ── */
+    .kanban-wrapper{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+    .kanban-board{flex:1;display:flex;gap:16px;padding:20px 24px 24px;overflow-x:auto;overflow-y:hidden;align-items:flex-start;}
+    .kanban-col{min-width:280px;width:280px;flex-shrink:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;max-height:calc(100vh - var(--topbar-h) - 80px);}
+    .col-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+    .col-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+    .col-title{font-size:0.85rem;font-weight:600;flex:1;}
+    .col-count{font-size:0.72rem;font-weight:700;background:var(--surface2);color:var(--text3);padding:3px 8px;border-radius:99px;}
+    .col-add{background:none;border:none;color:var(--text3);font-size:1.1rem;padding:2px 4px;border-radius:4px;transition:all 0.15s;}
+    .col-add:hover{background:var(--surface2);color:var(--text);}
+    .col-cards{padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;min-height:80px;}
+    .col-cards.drag-over{background:var(--accent-glow);border-radius:8px;}
+    .kanban-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;cursor:grab;transition:all 0.15s;position:relative;}
+    .kanban-card:active{cursor:grabbing;}
+    .kanban-card:hover{border-color:var(--border2);box-shadow:0 6px 20px #00000055;transform:translateY(-1px);}
+    .kanban-card.dragging{opacity:0.4;transform:rotate(1.5deg) scale(0.97);}
+    .card-name{font-size:0.88rem;font-weight:600;margin-bottom:6px;}
+    .card-source{font-size:0.7rem;padding:2px 7px;border-radius:99px;display:inline-block;margin-bottom:8px;}
+    .card-details{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+    .card-detail{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text3);}
+    .card-detail .icon{font-size:0.8rem;width:14px;text-align:center;}
+    .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);}
+    .card-date{font-size:0.7rem;color:var(--text3);}
+    .card-actions{display:flex;gap:4px;}
+    .card-action-btn{background:none;border:none;color:var(--text3);font-size:0.85rem;padding:3px 5px;border-radius:4px;transition:all 0.15s;}
+    .card-action-btn:hover{background:var(--surface2);color:var(--text);}
+    .card-notes{font-size:0.74rem;color:var(--text3);background:var(--surface);padding:7px 9px;border-radius:6px;margin-bottom:10px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .card-owner{font-size:0.68rem;color:var(--text3);display:flex;align-items:center;gap:4px;margin-bottom:6px;}
+
+    /* ── RELACIONAMENTO ── */
+    .rel-content{padding:24px;display:flex;flex-direction:column;gap:20px;}
+    .tier-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+    .tier-header{
+      padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;
+      border-bottom:1px solid var(--border);transition:background 0.15s;
+    }
+    .tier-header:hover{background:var(--bg3);}
+    .tier-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    .tier-title{font-size:0.88rem;font-weight:600;flex:1;}
+    .tier-meta{font-size:0.75rem;color:var(--text3);}
+    .tier-count{font-size:0.72rem;font-weight:700;background:var(--surface2);color:var(--text3);padding:3px 8px;border-radius:99px;}
+    .client-grid{padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+    .client-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;transition:all 0.15s;}
+    .client-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+    .cc-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .cc-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:#fff;flex-shrink:0;}
+    .cc-name{font-size:0.9rem;font-weight:600;}
+    .cc-patrimony{font-size:0.75rem;margin-top:2px;font-weight:500;}
+    .cc-details{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+    .cc-detail{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text3);}
+    .cc-freq{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text3);}
+    .cc-freq .freq-tag{font-size:0.68rem;padding:2px 8px;border-radius:99px;font-weight:600;}
+    .cc-actions{margin-top:10px;display:flex;gap:6px;}
+    .cc-owner{font-size:0.68rem;color:var(--text3);display:flex;align-items:center;gap:4px;margin-bottom:6px;}
+
+    /* ── IMPORTAR ── */
+    .import-content{padding:32px;max-width:740px;}
+    .import-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:48px 32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg2);margin-bottom:24px;}
+    .import-zone:hover,.import-zone.dragover{border-color:var(--accent);background:var(--accent-glow);}
+    .import-icon{font-size:2.5rem;margin-bottom:12px;opacity:0.6;}
+    .import-title{font-size:1rem;font-weight:600;margin-bottom:6px;}
+    .import-sub{font-size:0.82rem;color:var(--text3);}
+    .import-preview{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+    .import-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+    .import-table th{padding:10px 14px;background:var(--bg3);font-weight:600;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);}
+    .import-table td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text2);}
+    .import-table tr:last-child td{border-bottom:none;}
+    .import-table tr:hover td{background:var(--bg3);}
+
+    /* ── MODAL ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:#00000088;backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:520px;box-shadow:0 24px 80px #000000aa;animation:modalIn 0.2s ease;}
+    @keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(0.97);}to{opacity:1;transform:none;}}
+    .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .modal-title{font-size:1rem;font-weight:600;}
+    .modal-close{background:none;border:none;color:var(--text3);font-size:1.2rem;padding:4px;border-radius:4px;transition:all 0.15s;}
+    .modal-close:hover{background:var(--surface2);color:var(--text);}
+    .modal-body{padding:20px 24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+    .form-group{margin-bottom:16px;}
+    .form-label{display:block;font-size:0.8rem;font-weight:500;color:var(--text2);margin-bottom:6px;}
+    .form-control{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:0.88rem;outline:none;transition:border-color 0.15s;}
+    .form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+    .form-control::placeholder{color:var(--text3);}
+    textarea.form-control{resize:vertical;min-height:80px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+    /* ── TOAST ── */
+    .toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;font-size:0.85rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;animation:toastIn 0.25s ease;max-width:320px;}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+    .toast.success{border-left:3px solid var(--green);}
+    .toast.error{border-left:3px solid var(--red);}
+    .toast.info{border-left:3px solid var(--accent);}
+
+    /* ── MISC ── */
+    .empty-state{text-align:center;padding:32px 16px;color:var(--text3);}
+    .empty-state .empty-icon{font-size:2rem;margin-bottom:10px;opacity:0.4;}
+    .empty-state p{font-size:0.82rem;}
+    .search-wrap{position:relative;display:flex;align-items:center;}
+    .search-icon{position:absolute;left:10px;color:var(--text3);font-size:0.9rem;pointer-events:none;}
+    .search-input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px 7px 32px;color:var(--text);font-size:0.82rem;outline:none;width:220px;transition:all 0.15s;}
+    .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+    .search-input::placeholder{color:var(--text3);}
+    .hidden{display:none!important;}
+    .flex{display:flex;}.items-center{align-items:center;}.gap-2{gap:8px;}.ml-auto{margin-left:auto;}.text-muted{color:var(--text3);}.text-sm{font-size:0.8rem;}
+    .divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+    .progress-bar-wrap{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:8px;}
+    .progress-bar{height:100%;border-radius:99px;transition:width 0.4s ease;}
+    .import-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+    .import-option-btn{
+      display:flex;align-items:center;gap:8px;padding:10px 14px;
+      background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
+      color:var(--text2);font-size:0.82rem;transition:all 0.15s;
+    }
+    .import-option-btn:hover{border-color:var(--accent);color:var(--accent2);}
+    .import-option-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent2);}
+    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;}
+    .filter-btn{
+      padding:5px 12px;border-radius:99px;font-size:0.75rem;font-weight:500;
+      background:var(--surface);border:1px solid var(--border);color:var(--text2);transition:all 0.15s;
+    }
+    .filter-btn:hover{border-color:var(--border2);color:var(--text);}
+    .filter-btn.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2);}
+    .owner-filter{
+      padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
+      color:var(--text2);font-size:0.78rem;outline:none;
+    }
+    .owner-filter:focus{border-color:var(--accent);}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">📈</div>
+      <div class="logo-text">Invest<span>CRM</span></div>
+    </div>
+    <p class="login-title">Selecione seu perfil para entrar</p>
+    <div class="login-users" id="login-users-list">
+      <!-- preenchido por JS -->
+    </div>
+    <hr class="login-divider"/>
+    <button class="login-new" onclick="openModalNewUser()">＋ Adicionar novo assessor</button>
+  </div>
+</div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">📈</div>
+      <div class="logo-text">Invest<span>CRM</span></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Principal</div>
+    <ul class="sidebar-nav">
+      <li><button class="active" onclick="navigate('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">⬛</span> Dashboard
+      </button></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Funis</div>
+    <ul class="sidebar-nav">
+      <li><button onclick="navigate('prospeccao')" id="nav-prospeccao">
+        <span class="nav-icon">🎯</span> Prospecção
+        <span class="nav-badge" id="badge-prospeccao">0</span>
+      </button></li>
+      <li><button onclick="navigate('relacionamento')" id="nav-relacionamento">
+        <span class="nav-icon">🤝</span> Relacionamento
+        <span class="nav-badge green" id="badge-relacionamento">0</span>
+      </button></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Ferramentas</div>
+    <ul class="sidebar-nav">
+      <li><button onclick="navigate('importar')" id="nav-importar">
+        <span class="nav-icon">📥</span> Importar Clientes
+      </button></li>
+      <li><button onclick="navigate('alertas')" id="nav-alertas">
+        <span class="nav-icon">🔔</span> Alertas
+        <span class="nav-badge" id="badge-alertas">0</span>
+      </button></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section" id="equipe-nav-section">
+    <div class="sidebar-section-label">Gestão</div>
+    <ul class="sidebar-nav">
+      <li><button onclick="navigate('equipe')" id="nav-equipe">
+        <span class="nav-icon">👥</span> Equipe
+      </button></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar" style="background:linear-gradient(135deg,var(--accent),var(--purple));">AS</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Assessor</div>
+        <div class="user-role" id="user-role-label">Assessor de Investimentos</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">↩ Trocar perfil</button>
+  </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="topbar-title">
+      Dashboard <span class="sub">Visão geral</span>
+    </div>
+    <div class="topbar-actions" id="topbar-actions"></div>
+  </header>
+
+  <div class="page-content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="dashboard-grid">
+        <div class="stat-card accent">
+          <span class="stat-icon">🎯</span>
+          <div class="stat-label">Leads em Prospecção</div>
+          <div class="stat-value" id="stat-leads">0</div>
+          <div class="stat-sub" id="stat-leads-sub">0 em 1ª Reunião</div>
+        </div>
+        <div class="stat-card green">
+          <span class="stat-icon">🤝</span>
+          <div class="stat-label">Clientes Ativos</div>
+          <div class="stat-value" id="stat-clientes">0</div>
+          <div class="stat-sub" id="stat-clientes-sub">Na carteira</div>
+        </div>
+        <div class="stat-card yellow">
+          <span class="stat-icon">💰</span>
+          <div class="stat-label">Patrimônio Total</div>
+          <div class="stat-value" id="stat-patrimony">R$ 0</div>
+          <div class="stat-sub" id="stat-patrimony-sub">Sob gestão</div>
+        </div>
+        <div class="stat-card red">
+          <span class="stat-icon">⚠️</span>
+          <div class="stat-label">Reuniões Atrasadas</div>
+          <div class="stat-value" id="stat-overdue">0</div>
+          <div class="stat-sub">Precisam de atenção</div>
+        </div>
+      </div>
+      <div class="dashboard-lower">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">🗓 Agenda do Dia</span>
+            <span class="text-muted text-sm" id="today-date"></span>
+          </div>
+          <div class="panel-body">
+            <ul class="today-list" id="today-list">
+              <div class="empty-state"><div class="empty-icon">🎉</div><p>Nenhum alerta!</p></div>
+            </ul>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">📊 Pipeline de Prospecção</span>
+          </div>
+          <div class="panel-body">
+            <div id="pipeline-summary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROSPECÇÃO -->
+    <div class="page" id="page-prospeccao">
+      <div class="kanban-wrapper">
+        <div class="kanban-board" id="kanban-board"></div>
+      </div>
+    </div>
+
+    <!-- RELACIONAMENTO -->
+    <div class="page" id="page-relacionamento">
+      <div class="rel-content" id="rel-content"></div>
+    </div>
+
+    <!-- IMPORTAR -->
+    <div class="page" id="page-importar">
+      <div class="import-content">
+        <h2 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;">Importar Clientes</h2>
+        <p style="color:var(--text3);font-size:0.85rem;margin-bottom:20px;">
+          Faça upload de uma planilha Excel (.xlsx) ou CSV. Os clientes serão segmentados automaticamente por patrimônio.
+        </p>
+
+        <div style="margin-bottom:16px;">
+          <p style="font-size:0.8rem;color:var(--text3);margin-bottom:8px;">Importar como:</p>
+          <div class="import-options">
+            <button class="import-option-btn active" id="import-opt-me" onclick="setImportOwner('me')">
+              👤 Minha carteira
+            </button>
+            <button class="import-option-btn" id="import-opt-other" onclick="setImportOwner('other')" id="import-opt-other-wrap">
+              👥 Carteira de outro assessor
+            </button>
+          </div>
+          <div id="import-owner-select-wrap" class="hidden" style="margin-top:8px;">
+            <select class="form-control" id="import-owner-select">
+              <option value="">Selecione o assessor...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="import-zone" id="import-zone" onclick="document.getElementById('file-input').click()">
+          <div class="import-icon">📁</div>
+          <div class="import-title">Clique ou arraste o arquivo aqui</div>
+          <div class="import-sub">Aceita .xlsx, .xls ou .csv — máx. 10 MB</div>
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none" />
+        </div>
+
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-header"><span class="panel-title">📋 Colunas Reconhecidas</span></div>
+          <div class="panel-body">
+            <table class="import-table">
+              <thead><tr><th>Coluna na planilha</th><th>Tipo</th><th>Obrigatório</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Nome</strong> (ou <em>name</em>)</td><td>Texto</td><td>✅ Sim</td></tr>
+                <tr><td><strong>Email</strong> (ou <em>e-mail</em>)</td><td>Email</td><td>—</td></tr>
+                <tr><td><strong>Telefone</strong> (ou <em>celular, phone, tel</em>)</td><td>Texto</td><td>—</td></tr>
+                <tr><td><strong>Patrimônio</strong> (ou <em>patrimony, valor, saldo</em>)</td><td>Número (R$)</td><td>— (usado para segmentação)</td></tr>
+                <tr><td><strong>Última Reunião</strong> (ou <em>data, ultima_reuniao</em>)</td><td>Data DD/MM/AAAA</td><td>—</td></tr>
+                <tr><td><strong>Assessor</strong> (ou <em>owner, responsavel</em>)</td><td>Nome do assessor</td><td>— (sobrescreve seleção acima)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="import-preview-wrap" class="hidden">
+          <div class="panel import-preview">
+            <div class="panel-header">
+              <span class="panel-title" id="import-preview-title">Preview</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="import-table" id="import-preview-table"></table>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px;">
+            <button class="btn btn-primary" onclick="confirmImport()">✅ Confirmar Importação</button>
+            <button class="btn btn-ghost" onclick="cancelImport()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="page" id="page-alertas">
+      <div class="rel-content">
+        <h2 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:6px;">Central de Alertas</h2>
+        <p style="color:var(--text3);font-size:0.85rem;margin-bottom:20px;">Clientes que precisam de atenção imediata.</p>
+        <div id="alertas-list"></div>
+      </div>
+    </div>
+
+    <!-- EQUIPE -->
+    <div class="page" id="page-equipe">
+      <div class="equipe-content">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:4px;">Gestão da Equipe</h2>
+            <p style="color:var(--text3);font-size:0.85rem;">Visão consolidada de todos os assessores.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModalNewUser()">＋ Adicionar Assessor</button>
+        </div>
+        <div class="equipe-grid" id="equipe-grid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ MODAIS ══════════════ -->
+
+<!-- Modal: Novo Lead -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-lead-title">Novo Lead</span>
+      <button class="modal-close" onclick="closeModal('modal-lead')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="lead-edit-id" />
+      <div class="form-group">
+        <label class="form-label">Nome *</label>
+        <input type="text" class="form-control" id="lead-name" placeholder="Nome completo" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Telefone</label>
+          <input type="text" class="form-control" id="lead-phone" placeholder="(11) 99999-9999" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="lead-email" placeholder="email@exemplo.com" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Origem do Lead</label>
+          <select class="form-control" id="lead-source">
+            <option value="Indicação">Indicação</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Site">Site</option>
+            <option value="Evento">Evento</option>
+            <option value="Outbound">Outbound</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Etapa Inicial</label>
+          <select class="form-control" id="lead-stage">
+            <option value="prospeccao">Prospecção</option>
+            <option value="reuniao1">1ª Reunião</option>
+            <option value="reuniao2">2ª Reunião</option>
+            <option value="planejamento">Planejamento Patrimonial</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="lead-owner-group">
+        <label class="form-label">Responsável (Assessor)</label>
+        <select class="form-control" id="lead-owner"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <textarea class="form-control" id="lead-notes" placeholder="Informações adicionais sobre o lead..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-lead')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLead()">💾 Salvar Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Novo Cliente -->
+<div class="modal-overlay" id="modal-client">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-client-title">Novo Cliente</span>
+      <button class="modal-close" onclick="closeModal('modal-client')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="client-edit-id" />
+      <div class="form-group">
+        <label class="form-label">Nome *</label>
+        <input type="text" class="form-control" id="client-name" placeholder="Nome completo" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="client-email" placeholder="email@exemplo.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone</label>
+          <input type="text" class="form-control" id="client-phone" placeholder="(11) 99999-9999" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Patrimônio Total (R$) *</label>
+          <input type="number" class="form-control" id="client-patrimony" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data Última Reunião *</label>
+          <input type="date" class="form-control" id="client-lastmeeting" />
+        </div>
+      </div>
+      <div class="form-group" id="client-owner-group">
+        <label class="form-label">Responsável (Assessor)</label>
+        <select class="form-control" id="client-owner"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <textarea class="form-control" id="client-notes" placeholder="Notas sobre o cliente..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-client')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveClient()">💾 Salvar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Novo Usuário -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title">Adicionar Assessor</span>
+      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome completo *</label>
+        <input type="text" class="form-control" id="new-user-name" placeholder="Ex: João Silva" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Papel</label>
+          <select class="form-control" id="new-user-role">
+            <option value="assessor">Assessor</option>
+            <option value="gestor">Gestor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor do avatar</label>
+          <select class="form-control" id="new-user-color">
+            <option value="linear-gradient(135deg,#5b7fff,#a78bfa)">Azul / Roxo</option>
+            <option value="linear-gradient(135deg,#3ecf8e,#5b7fff)">Verde / Azul</option>
+            <option value="linear-gradient(135deg,#f5a623,#ff5b5b)">Laranja / Vermelho</option>
+            <option value="linear-gradient(135deg,#a78bfa,#f472b6)">Roxo / Rosa</option>
+            <option value="linear-gradient(135deg,#3ecf8e,#f5a623)">Verde / Amarelo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-user')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNewUser()">✅ Criar perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirmação Delete -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">Confirmar Exclusão</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.9rem;color:var(--text2);" id="confirm-msg">Tem certeza?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">🗑 Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   INVESTCRM — Multi-usuário | v2.0
+   Persistência: localStorage (por usuário)
+   Preparado para GitHub Pages
+═══════════════════════════════════════════════════════════ */
+
+// ── CONSTANTES ──
+const STAGES = [
+  { id:'prospeccao',   label:'Prospecção',                 color:'#64748b' },
+  { id:'reuniao1',     label:'1ª Reunião',                 color:'#5b7fff' },
+  { id:'reuniao2',     label:'2ª Reunião',                 color:'#a78bfa' },
+  { id:'planejamento', label:'Planejamento Patrimonial',   color:'#f5a623' },
+];
+
+const TIERS = [
+  { id:'t1', label:'Sob Demanda',            range:'Até R$150K',      maxVal:150000,   intervalDays:null, color:'#64748b', avatarBg:'#64748b22' },
+  { id:'t2', label:'Reunião Semestral',       range:'R$150K – R$300K', maxVal:300000,   intervalDays:180,  color:'#5b7fff', avatarBg:'#5b7fff22' },
+  { id:'t3', label:'Reunião Trimestral',      range:'R$300K – R$1M',   maxVal:1000000,  intervalDays:90,   color:'#a78bfa', avatarBg:'#a78bfa22' },
+  { id:'t4', label:'Reunião Mensal/Bimestral',range:'Acima de R$1M',   maxVal:Infinity, intervalDays:45,   color:'#f5a623', avatarBg:'#f5a62322' },
+];
+
+const SOURCE_COLORS = {
+  'Indicação':{ bg:'#3ecf8e18', color:'#3ecf8e' },
+  'LinkedIn':  { bg:'#5b7fff18', color:'#5b7fff' },
+  'Instagram': { bg:'#f472b618', color:'#f472b6' },
+  'Site':      { bg:'#a78bfa18', color:'#a78bfa' },
+  'Evento':    { bg:'#f5a62318', color:'#f5a623' },
+  'Outbound':  { bg:'#64748b18', color:'#94a3b8' },
+  'Outro':     { bg:'#ffffff10', color:'#9ea3c0' },
+};
+
+const STORAGE_KEY_USERS   = 'investcrm_users_v2';
+const STORAGE_KEY_DATA    = 'investcrm_data_v2';
+const STORAGE_KEY_SESSION = 'investcrm_session_v2';
+
+// ── ESTADO GLOBAL ──
+let currentUser = null;  // { id, name, role, color }
+let users       = [];    // todos os perfis cadastrados
+let state       = { leads:[], clients:[] }; // dados do usuário logado
+let globalData  = {};    // { [userId]: { leads, clients } }
+let importData  = [];
+let importOwnerMode = 'me';
+let kanbanFilter = '';
+let kanbanOwnerFilter = 'all';
+let relFilter = '';
+let relOwnerFilter = 'all';
+let dragLeadId = null;
+
+// ── PERSISTÊNCIA ──
+function saveUsers() {
+  localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+}
+
+function loadUsers() {
+  const raw = localStorage.getItem(STORAGE_KEY_USERS);
+  if (raw) {
+    try { users = JSON.parse(raw); } catch { users = []; }
+  } else {
+    users = [];
+  }
+}
+
+function saveGlobalData() {
+  localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(globalData));
+}
+
+function loadGlobalData() {
+  const raw = localStorage.getItem(STORAGE_KEY_DATA);
+  if (raw) {
+    try { globalData = JSON.parse(raw); } catch { globalData = {}; }
+  } else {
+    globalData = {};
+  }
+}
+
+function saveState() {
+  if (!currentUser) return;
+  globalData[currentUser.id] = JSON.parse(JSON.stringify(state));
+  saveGlobalData();
+}
+
+function loadStateForUser(userId) {
+  state = globalData[userId] ? JSON.parse(JSON.stringify(globalData[userId])) : { leads:[], clients:[] };
+}
+
+// ── UTILITÁRIOS ──
+function uid() { return '_' + Math.random().toString(36).slice(2, 11); }
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '—';
+  const [y,m,d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function fmtMoney(val) {
+  if (!val) return 'R$ 0';
+  return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(val);
+}
+
+function fmtMoneyShort(val) {
+  if (!val) return '—';
+  if (val >= 1e9) return `R$ ${(val/1e9).toFixed(1).replace('.',',')}B`;
+  if (val >= 1e6) return `R$ ${(val/1e6).toFixed(1).replace('.',',')}M`;
+  if (val >= 1e3) return `R$ ${(val/1e3).toFixed(0)}K`;
+  return fmtMoney(val);
+}
+
+function getInitials(name) {
+  if (!name) return '?';
+  return name.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+}
+
+function daysSince(dateStr) {
+  if (!dateStr) return Infinity;
+  return Math.floor((new Date() - new Date(dateStr)) / 86400000);
+}
+
+function addDays(dateStr, days) {
+  if (!dateStr || !days) return null;
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+}
+
+function getTier(patrimony) {
+  const v = Number(patrimony) || 0;
+  if (v <= 150000)  return TIERS[0];
+  if (v <= 300000)  return TIERS[1];
+  if (v <= 1000000) return TIERS[2];
+  return TIERS[3];
+}
+
+function getClientStatus(client) {
+  const tier = getTier(client.patrimony);
+  if (!tier.intervalDays) return { status:'demand', label:'Sob Demanda', next:null };
+  const since = daysSince(client.lastMeeting);
+  const next = addDays(client.lastMeeting, tier.intervalDays);
+  const daysToNext = -daysSince(next);
+  if (since > tier.intervalDays) return { status:'overdue', label:'Atrasado', next, daysToNext };
+  if (daysToNext <= 15)          return { status:'soon',    label:'Em breve',  next, daysToNext };
+  return                                { status:'ok',      label:'Em dia',    next, daysToNext };
+}
+
+function getUserById(id) {
+  return users.find(u => u.id === id);
+}
+
+function getUserName(id) {
+  const u = getUserById(id);
+  return u ? u.name : '—';
+}
+
+// ── DADOS CONSOLIDADOS (todos os usuários) ──
+function getAllLeads() {
+  let all = [];
+  users.forEach(u => {
+    const d = globalData[u.id];
+    if (d && d.leads) {
+      d.leads.forEach(l => all.push({ ...l, ownerId: l.ownerId || u.id }));
+    }
+  });
+  return all;
+}
+
+function getAllClients() {
+  let all = [];
+  users.forEach(u => {
+    const d = globalData[u.id];
+    if (d && d.clients) {
+      d.clients.forEach(c => all.push({ ...c, ownerId: c.ownerId || u.id }));
+    }
+  });
+  return all;
+}
+
+function isGestor() {
+  return currentUser && currentUser.role === 'gestor';
+}
+
+// ── LOGIN ──
+function renderLoginScreen() {
+  loadUsers();
+  const list = document.getElementById('login-users-list');
+  if (!users.length) {
+    list.innerHTML = `<p style="color:var(--text3);font-size:0.82rem;text-align:center;padding:12px;">
+      Nenhum perfil cadastrado. Crie o primeiro abaixo.
+    </p>`;
+    return;
+  }
+  list.innerHTML = users.map(u => `
+    <button class="login-user-btn" onclick="doLogin('${u.id}')">
+      <div class="u-avatar" style="background:${u.color}">${getInitials(u.name)}</div>
+      <div>
+        <div>${u.name}</div>
+        <div class="u-role">${u.role === 'gestor' ? '⭐ Gestor' : 'Assessor de Investimentos'}</div>
+      </div>
+    </button>
+  `).join('');
+}
+
+function doLogin(userId) {
+  const user = users.find(u => u.id === userId);
+  if (!user) return;
+  currentUser = user;
+  localStorage.setItem(STORAGE_KEY_SESSION, userId);
+  document.getElementById('login-screen').classList.add('hidden');
+  loadStateForUser(userId);
+  initApp();
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem(STORAGE_KEY_SESSION);
+  state = { leads:[], clients:[] };
+  renderLoginScreen();
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function openModalNewUser() {
+  document.getElementById('new-user-name').value = '';
+  document.getElementById('new-user-role').value = 'assessor';
+  openModal('modal-user');
+}
+
+function saveNewUser() {
+  const name = document.getElementById('new-user-name').value.trim();
+  if (!name) { toast('Nome é obrigatório!', 'error'); return; }
+  const role  = document.getElementById('new-user-role').value;
+  const color = document.getElementById('new-user-color').value;
+  const newUser = { id: uid(), name, role, color };
+  users.push(newUser);
+  saveUsers();
+  closeModal('modal-user');
+  toast(`✅ Perfil "${name}" criado!`, 'success');
+  // Se já logado (criando da tela de equipe), apenas rerender
+  if (currentUser) {
+    renderEquipe();
+    populateOwnerSelects();
+  } else {
+    renderLoginScreen();
+  }
+}
+
+// ── INIT APP ──
+function initApp() {
+  // sidebar user info
+  document.getElementById('user-avatar').textContent = getInitials(currentUser.name);
+  document.getElementById('user-avatar').style.background = currentUser.color;
+  document.getElementById('user-name').textContent = currentUser.name;
+  document.getElementById('user-role-label').textContent =
+    currentUser.role === 'gestor' ? '⭐ Gestor' : 'Assessor de Investimentos';
+
+  // Gestão de equipe: só gestor vê
+  document.getElementById('equipe-nav-section').style.display = isGestor() ? '' : 'none';
+
+  populateOwnerSelects();
+  updateBadges();
+  renderDashboard();
+  initImport();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')
+      document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  });
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+}
+
+// ── OWNER SELECTS ──
+function populateOwnerSelects() {
+  const opts = users.map(u =>
+    `<option value="${u.id}"${currentUser && u.id === currentUser.id ? ' selected':''}>
+      ${u.name}${u.role==='gestor'?' (Gestor)':''}
+    </option>`
+  ).join('');
+
+  document.getElementById('lead-owner').innerHTML = opts;
+  document.getElementById('client-owner').innerHTML = opts;
+
+  // Import owner select
+  const importSel = document.getElementById('import-owner-select');
+  importSel.innerHTML = '<option value="">Selecione o assessor...</option>' + opts;
+
+  // Owner filter dropdowns (rebuilding if they exist)
+  buildOwnerFilterDropdowns();
+}
+
+function buildOwnerFilterDropdowns() {
+  // Only relevant for gestor — built dynamically in render functions
+}
+
+// ── NAVEGAÇÃO ──
+const PAGE_CONFIG = {
+  dashboard:      { title:'Dashboard',           sub:'Visão geral' },
+  prospeccao:     { title:'Funil de Prospecção', sub:'Kanban de leads' },
+  relacionamento: { title:'Relacionamento',      sub:'Gestão de clientes ativos' },
+  importar:       { title:'Importar Clientes',   sub:'Upload de planilha' },
+  alertas:        { title:'Central de Alertas',  sub:'Reuniões e follow-ups' },
+  equipe:         { title:'Equipe',              sub:'Visão consolidada' },
+};
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const navBtn = document.getElementById('nav-'+page);
+  if (navBtn) navBtn.classList.add('active');
+  const cfg = PAGE_CONFIG[page] || {};
+  document.getElementById('topbar-title').innerHTML =
+    `${cfg.title || page} <span class="sub">${cfg.sub||''}</span>`;
+  renderTopbarActions(page);
+  if (page==='dashboard')      renderDashboard();
+  if (page==='prospeccao')     renderKanban();
+  if (page==='relacionamento') renderRelacionamento();
+  if (page==='alertas')        renderAlertas();
+  if (page==='equipe')         renderEquipe();
+}
+
+function renderTopbarActions(page) {
+  const wrap = document.getElementById('topbar-actions');
+  wrap.innerHTML = '';
+  if (page==='prospeccao') {
+    wrap.innerHTML = `
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Buscar lead..." oninput="filterKanban(this.value)" />
+      </div>
+      ${isGestor() ? `<select class="owner-filter" onchange="setKanbanOwnerFilter(this.value)">
+        <option value="all">Todos os assessores</option>
+        ${users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('')}
+      </select>` : ''}
+      <button class="btn btn-primary btn-sm" onclick="openModalLead()">＋ Novo Lead</button>`;
+  }
+  if (page==='relacionamento') {
+    wrap.innerHTML = `
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Buscar cliente..." oninput="filterRel(this.value)" />
+      </div>
+      ${isGestor() ? `<select class="owner-filter" onchange="setRelOwnerFilter(this.value)">
+        <option value="all">Todos os assessores</option>
+        ${users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('')}
+      </select>` : ''}
+      <button class="btn btn-primary btn-sm" onclick="openModalClient()">＋ Novo Cliente</button>`;
+  }
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  // Gestor vê tudo; assessor vê só os seus
+  const myLeads   = isGestor() ? getAllLeads()   : state.leads;
+  const myClients = isGestor() ? getAllClients() : state.clients;
+
+  document.getElementById('stat-leads').textContent = myLeads.length;
+  document.getElementById('stat-leads-sub').textContent =
+    `${myLeads.filter(l=>l.stage==='reuniao1').length} em 1ª Reunião`;
+  document.getElementById('stat-clientes').textContent = myClients.length;
+  if (isGestor()) {
+    document.getElementById('stat-clientes-sub').textContent = `${users.length} assessores`;
+  }
+  const totalPat = myClients.reduce((s,c)=>s+(Number(c.patrimony)||0),0);
+  document.getElementById('stat-patrimony').textContent = fmtMoneyShort(totalPat);
+  const overdueCount = myClients.filter(c=>getClientStatus(c).status==='overdue').length;
+  document.getElementById('stat-overdue').textContent = overdueCount;
+  document.getElementById('today-date').textContent =
+    new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  renderTodayList(myClients);
+  renderPipelineSummary(myLeads);
+}
+
+function renderTodayList(clients) {
+  const list = document.getElementById('today-list');
+  const items = [];
+  clients.forEach(c => {
+    const s = getClientStatus(c);
+    if (s.status==='overdue') {
+      const tier = getTier(c.patrimony);
+      items.push({ dot:'red', name:c.name, info:`Atrasado há ${daysSince(c.lastMeeting)-tier.intervalDays} dias`, tag:'tag-red', tagLabel:'Atrasado' });
+    } else if (s.status==='soon') {
+      items.push({ dot:'yellow', name:c.name, info:`Próxima em ${s.daysToNext} dia(s)`, tag:'tag-yellow', tagLabel:'Em breve' });
+    }
+  });
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><p>Nenhum alerta! Tudo em dia.</p></div>';
+    return;
+  }
+  list.innerHTML = items.slice(0,6).map(item=>`
+    <li class="today-item">
+      <span class="today-dot ${item.dot}"></span>
+      <span class="today-name">${item.name}</span>
+      <span class="today-info">${item.info}</span>
+      <span class="today-tag ${item.tag}">${item.tagLabel}</span>
+    </li>`).join('');
+}
+
+function renderPipelineSummary(leads) {
+  const wrap = document.getElementById('pipeline-summary');
+  const maxCount = Math.max(...STAGES.map(s=>leads.filter(l=>l.stage===s.id).length),1);
+  wrap.innerHTML = STAGES.map(stage=>{
+    const count = leads.filter(l=>l.stage===stage.id).length;
+    const pct = Math.round((count/maxCount)*100);
+    return `<div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:0.82rem;font-weight:500;">${stage.label}</span>
+        <span style="font-size:0.78rem;color:var(--text3);">${count} lead${count!==1?'s':''}</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" style="width:${pct}%;background:${stage.color};"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateBadges() {
+  const myLeads   = isGestor() ? getAllLeads()   : state.leads;
+  const myClients = isGestor() ? getAllClients() : state.clients;
+  document.getElementById('badge-prospeccao').textContent   = myLeads.length;
+  document.getElementById('badge-relacionamento').textContent = myClients.length;
+  const od = myClients.filter(c=>getClientStatus(c).status==='overdue').length;
+  document.getElementById('badge-alertas').textContent = od;
+}
+
+// ── KANBAN ──
+function filterKanban(val) { kanbanFilter=val; renderKanban(); }
+function setKanbanOwnerFilter(val) { kanbanOwnerFilter=val; renderKanban(); }
+
+function getVisibleLeads() {
+  let leads = isGestor() ? getAllLeads() : state.leads;
+  if (isGestor() && kanbanOwnerFilter !== 'all')
+    leads = leads.filter(l => (l.ownerId||'') === kanbanOwnerFilter);
+  if (kanbanFilter)
+    leads = leads.filter(l => l.name.toLowerCase().includes(kanbanFilter.toLowerCase()));
+  return leads;
+}
+
+function renderKanban() {
+  const board = document.getElementById('kanban-board');
+  const leads = getVisibleLeads();
+  board.innerHTML = STAGES.map(stage => {
+    const stageLeads = leads.filter(l=>l.stage===stage.id);
+    return `
+      <div class="kanban-col" data-stage="${stage.id}">
+        <div class="col-header">
+          <span class="col-dot" style="background:${stage.color};box-shadow:0 0 6px ${stage.color}66;"></span>
+          <span class="col-title">${stage.label}</span>
+          <span class="col-count">${stageLeads.length}</span>
+          <button class="col-add" title="Adicionar lead" onclick="openModalLead('${stage.id}')">＋</button>
+        </div>
+        <div class="col-cards" data-stage="${stage.id}"
+          ondragover="onDragOver(event)"
+          ondragleave="onDragLeave(event)"
+          ondrop="onDrop(event,'${stage.id}')">
+          ${stageLeads.length ? stageLeads.map(l=>renderCard(l)).join('') :
+            '<div class="empty-state"><div class="empty-icon" style="font-size:1.3rem;">📋</div><p>Arraste cards aqui</p></div>'}
+        </div>
+      </div>`;
+  }).join('');
+  board.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragstart', e => onDragStart(e, card.dataset.id));
+    card.addEventListener('dragend',   e => onDragEnd(e));
+  });
+}
+
+function renderCard(lead) {
+  const srcColor = SOURCE_COLORS[lead.source] || SOURCE_COLORS['Outro'];
+  const owner = getUserById(lead.ownerId);
+  const showOwner = isGestor() && owner;
+  return `
+    <div class="kanban-card" data-id="${lead.id}" draggable="true">
+      <div class="card-name">${lead.name}</div>
+      <span class="card-source" style="background:${srcColor.bg};color:${srcColor.color};">${lead.source||'—'}</span>
+      ${showOwner ? `<div class="card-owner">👤 ${owner.name}</div>` : ''}
+      <div class="card-details">
+        ${lead.phone?`<div class="card-detail"><span class="icon">📞</span>${lead.phone}</div>`:''}
+        ${lead.email?`<div class="card-detail"><span class="icon">✉️</span>${lead.email}</div>`:''}
+      </div>
+      ${lead.notes?`<div class="card-notes">${lead.notes}</div>`:''}
+      <div class="card-footer">
+        <span class="card-date">Última: ${fmtDate(lead.lastInteraction)}</span>
+        <div class="card-actions">
+          <button class="card-action-btn" title="Editar" onclick="openModalLead(null,'${lead.id}','${lead.ownerId||''}')">✏️</button>
+          <button class="card-action-btn" title="Converter em cliente" onclick="promoteToClient('${lead.id}','${lead.ownerId||''}')">⬆️</button>
+          <button class="card-action-btn" title="Excluir" onclick="deleteLead('${lead.id}','${lead.ownerId||''}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function onDragStart(e, id) {
+  dragLeadId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(()=>e.target.classList.add('dragging'),0);
+}
+function onDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.col-cards').forEach(c=>c.classList.remove('drag-over'));
+}
+function onDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function onDrop(e, targetStage) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!dragLeadId) return;
+  // Find which user owns this lead
+  const ownerId = findLeadOwnerId(dragLeadId);
+  if (!ownerId) return;
+  const ownerData = globalData[ownerId] || { leads:[], clients:[] };
+  const lead = ownerData.leads.find(l=>l.id===dragLeadId);
+  if (!lead) return;
+  lead.stage = targetStage;
+  lead.lastInteraction = new Date().toISOString().split('T')[0];
+  globalData[ownerId] = ownerData;
+  if (ownerId === currentUser.id) state = ownerData;
+  saveGlobalData();
+  renderKanban();
+  updateBadges();
+  toast('✅ Lead movido para '+STAGES.find(s=>s.id===targetStage)?.label,'success');
+}
+
+function findLeadOwnerId(leadId) {
+  for (const u of users) {
+    const d = globalData[u.id];
+    if (d && d.leads && d.leads.find(l=>l.id===leadId)) return u.id;
+  }
+  return null;
+}
+
+function findClientOwnerId(clientId) {
+  for (const u of users) {
+    const d = globalData[u.id];
+    if (d && d.clients && d.clients.find(c=>c.id===clientId)) return u.id;
+  }
+  return null;
+}
+
+// CRUD Leads
+function openModalLead(stageId, editId, editOwnerId) {
+  clearLeadForm();
+  document.getElementById('lead-owner').value = currentUser.id;
+  if (editId) {
+    const ownerId = editOwnerId || findLeadOwnerId(editId) || currentUser.id;
+    const ownerData = globalData[ownerId] || state;
+    const lead = (ownerData.leads||[]).find(l=>l.id===editId);
+    if (!lead) return;
+    document.getElementById('modal-lead-title').textContent = 'Editar Lead';
+    document.getElementById('lead-edit-id').value   = editId;
+    document.getElementById('lead-name').value       = lead.name||'';
+    document.getElementById('lead-phone').value      = lead.phone||'';
+    document.getElementById('lead-email').value      = lead.email||'';
+    document.getElementById('lead-source').value     = lead.source||'Indicação';
+    document.getElementById('lead-stage').value      = lead.stage||'prospeccao';
+    document.getElementById('lead-notes').value      = lead.notes||'';
+    document.getElementById('lead-owner').value      = ownerId;
+  } else {
+    document.getElementById('modal-lead-title').textContent = 'Novo Lead';
+    if (stageId) document.getElementById('lead-stage').value = stageId;
+  }
+  openModal('modal-lead');
+}
+
+function clearLeadForm() {
+  ['lead-edit-id','lead-name','lead-phone','lead-email','lead-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('lead-source').value = 'Indicação';
+  document.getElementById('lead-stage').value  = 'prospeccao';
+}
+
+function saveLead() {
+  const name = document.getElementById('lead-name').value.trim();
+  if (!name) { toast('Nome é obrigatório!','error'); return; }
+  const ownerId = document.getElementById('lead-owner').value || currentUser.id;
+  const editId  = document.getElementById('lead-edit-id').value;
+  const data = {
+    name,
+    phone: document.getElementById('lead-phone').value.trim(),
+    email: document.getElementById('lead-email').value.trim(),
+    source: document.getElementById('lead-source').value,
+    stage:  document.getElementById('lead-stage').value,
+    notes:  document.getElementById('lead-notes').value.trim(),
+    lastInteraction: new Date().toISOString().split('T')[0],
+    ownerId,
+  };
+  if (!globalData[ownerId]) globalData[ownerId] = { leads:[], clients:[] };
+  if (editId) {
+    // Remove from old owner if owner changed
+    const oldOwnerId = findLeadOwnerId(editId);
+    if (oldOwnerId && oldOwnerId !== ownerId) {
+      globalData[oldOwnerId].leads = globalData[oldOwnerId].leads.filter(l=>l.id!==editId);
+    }
+    const idx = globalData[ownerId].leads.findIndex(l=>l.id===editId);
+    if (idx > -1) globalData[ownerId].leads[idx] = { ...globalData[ownerId].leads[idx], ...data };
+    else globalData[ownerId].leads.push({ id:editId, ...data });
+    toast('✅ Lead atualizado!','success');
+  } else {
+    globalData[ownerId].leads.push({ id:uid(), ...data });
+    toast('✅ Lead criado!','success');
+  }
+  if (ownerId === currentUser.id) state = globalData[ownerId];
+  saveGlobalData();
+  closeModal('modal-lead');
+  renderKanban();
+  updateBadges();
+}
+
+function deleteLead(id, ownerId) {
+  document.getElementById('confirm-msg').textContent = 'Tem certeza que deseja excluir este lead?';
+  document.getElementById('confirm-ok-btn').onclick = () => {
+    const oId = ownerId || findLeadOwnerId(id) || currentUser.id;
+    if (globalData[oId]) globalData[oId].leads = globalData[oId].leads.filter(l=>l.id!==id);
+    if (oId===currentUser.id) state = globalData[oId];
+    saveGlobalData();
+    renderKanban();
+    updateBadges();
+    closeModal('modal-confirm');
+    toast('🗑 Lead removido','info');
+  };
+  openModal('modal-confirm');
+}
+
+function promoteToClient(leadId, ownerId) {
+  const oId = ownerId || findLeadOwnerId(leadId) || currentUser.id;
+  const d = globalData[oId] || { leads:[], clients:[] };
+  const lead = d.leads.find(l=>l.id===leadId);
+  if (!lead) return;
+  // Pré-preenche modal cliente
+  document.getElementById('client-name').value = lead.name;
+  document.getElementById('client-email').value = lead.email||'';
+  document.getElementById('client-phone').value = lead.phone||'';
+  document.getElementById('client-patrimony').value = '';
+  document.getElementById('client-lastmeeting').value = new Date().toISOString().split('T')[0];
+  document.getElementById('client-notes').value = lead.notes||'';
+  document.getElementById('client-owner').value = oId;
+  document.getElementById('modal-client-title').textContent = 'Converter em Cliente';
+  document.getElementById('client-edit-id').value = '';
+  document.__promotingLeadId = leadId;
+  document.__promotingLeadOwner = oId;
+  openModal('modal-client');
+}
+
+// CRUD Clients
+function openModalClient(editId, editOwnerId) {
+  clearClientForm();
+  document.getElementById('client-owner').value = currentUser.id;
+  document.getElementById('client-lastmeeting').value = new Date().toISOString().split('T')[0];
+  if (editId) {
+    const ownerId = editOwnerId || findClientOwnerId(editId) || currentUser.id;
+    const ownerData = globalData[ownerId] || state;
+    const client = (ownerData.clients||[]).find(c=>c.id===editId);
+    if (!client) return;
+    document.getElementById('modal-client-title').textContent = 'Editar Cliente';
+    document.getElementById('client-edit-id').value     = editId;
+    document.getElementById('client-name').value         = client.name||'';
+    document.getElementById('client-email').value        = client.email||'';
+    document.getElementById('client-phone').value        = client.phone||'';
+    document.getElementById('client-patrimony').value    = client.patrimony||'';
+    document.getElementById('client-lastmeeting').value  = client.lastMeeting||'';
+    document.getElementById('client-notes').value        = client.notes||'';
+    document.getElementById('client-owner').value        = ownerId;
+  } else {
+    document.getElementById('modal-client-title').textContent = 'Novo Cliente';
+  }
+  openModal('modal-client');
+}
+
+function clearClientForm() {
+  ['client-edit-id','client-name','client-email','client-phone','client-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('client-patrimony').value = '';
+  document.getElementById('client-lastmeeting').value = '';
+  document.__promotingLeadId = null;
+  document.__promotingLeadOwner = null;
+}
+
+function saveClient() {
+  const name = document.getElementById('client-name').value.trim();
+  if (!name) { toast('Nome é obrigatório!','error'); return; }
+  const patrimony = parseFloat(document.getElementById('client-patrimony').value)||0;
+  const ownerId = document.getElementById('client-owner').value || currentUser.id;
+  const editId  = document.getElementById('client-edit-id').value;
+  const data = {
+    name,
+    email:       document.getElementById('client-email').value.trim(),
+    phone:       document.getElementById('client-phone').value.trim(),
+    patrimony,
+    lastMeeting: document.getElementById('client-lastmeeting').value,
+    notes:       document.getElementById('client-notes').value.trim(),
+    ownerId,
+  };
+  if (!globalData[ownerId]) globalData[ownerId] = { leads:[], clients:[] };
+  if (editId) {
+    const oldOwnerId = findClientOwnerId(editId);
+    if (oldOwnerId && oldOwnerId !== ownerId) {
+      globalData[oldOwnerId].clients = globalData[oldOwnerId].clients.filter(c=>c.id!==editId);
+    }
+    const idx = globalData[ownerId].clients.findIndex(c=>c.id===editId);
+    if (idx>-1) globalData[ownerId].clients[idx] = { ...globalData[ownerId].clients[idx], ...data };
+    else globalData[ownerId].clients.push({ id:editId, ...data });
+    toast('✅ Cliente atualizado!','success');
+  } else {
+    globalData[ownerId].clients.push({ id:uid(), ...data });
+    if (document.__promotingLeadId) {
+      const pOwnerId = document.__promotingLeadOwner || ownerId;
+      if (globalData[pOwnerId]) {
+        globalData[pOwnerId].leads = globalData[pOwnerId].leads.filter(l=>l.id!==document.__promotingLeadId);
+      }
+      document.__promotingLeadId = null;
+      document.__promotingLeadOwner = null;
+      toast('🎉 Lead convertido em cliente!','success');
+    } else {
+      toast('✅ Cliente cadastrado!','success');
+    }
+  }
+  if (ownerId === currentUser.id) state = globalData[ownerId];
+  saveGlobalData();
+  closeModal('modal-client');
+  renderRelacionamento();
+  updateBadges();
+}
+
+function deleteClient(id, ownerId) {
+  document.getElementById('confirm-msg').textContent = 'Tem certeza que deseja excluir este cliente?';
+  document.getElementById('confirm-ok-btn').onclick = () => {
+    const oId = ownerId || findClientOwnerId(id) || currentUser.id;
+    if (globalData[oId]) globalData[oId].clients = globalData[oId].clients.filter(c=>c.id!==id);
+    if (oId===currentUser.id) state = globalData[oId];
+    saveGlobalData();
+    renderRelacionamento();
+    updateBadges();
+    closeModal('modal-confirm');
+    toast('🗑 Cliente removido','info');
+  };
+  openModal('modal-confirm');
+}
+
+// ── RELACIONAMENTO ──
+function filterRel(val) { relFilter=val; renderRelacionamento(); }
+function setRelOwnerFilter(val) { relOwnerFilter=val; renderRelacionamento(); }
+
+function renderRelacionamento() {
+  let clients = isGestor() ? getAllClients() : state.clients;
+  if (isGestor() && relOwnerFilter !== 'all')
+    clients = clients.filter(c=>(c.ownerId||'')===relOwnerFilter);
+  if (relFilter)
+    clients = clients.filter(c=>c.name.toLowerCase().includes(relFilter.toLowerCase()));
+
+  const wrap = document.getElementById('rel-content');
+  if (!clients.length) {
+    wrap.innerHTML = `<div class="empty-state" style="padding:60px;">
+      <div class="empty-icon" style="font-size:2.5rem;">📋</div>
+      <p style="font-size:0.95rem;">Nenhum cliente cadastrado ainda.</p>
+      <p style="margin-top:6px;">Use <strong>Importar Clientes</strong> ou adicione manualmente.</p>
+    </div>`;
+    return;
+  }
+
+  let html = '';
+  TIERS.forEach(tier => {
+    const tierClients = clients.filter(c=>getTier(c.patrimony).id===tier.id);
+    if (!tierClients.length) return;
+    const totalPat = tierClients.reduce((s,c)=>s+(Number(c.patrimony)||0),0);
+    html += `
+      <div class="tier-section">
+        <div class="tier-header">
+          <span class="tier-dot" style="background:${tier.color};box-shadow:0 0 6px ${tier.color}66;"></span>
+          <span class="tier-title">${tier.label}</span>
+          <span class="tier-meta">${tier.range} · ${fmtMoneyShort(totalPat)} total</span>
+          <span class="tier-count">${tierClients.length}</span>
+        </div>
+        <div class="client-grid">
+          ${tierClients.map(c=>renderClientCard(c,tier)).join('')}
+        </div>
+      </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function renderClientCard(client, tier) {
+  const st = getClientStatus(client);
+  const statusColor = st.status==='overdue'?'var(--red)':st.status==='soon'?'var(--yellow)':'var(--green)';
+  const statusTag   = st.status==='overdue'?'tag-red':st.status==='soon'?'tag-yellow':'tag-green';
+  const owner = getUserById(client.ownerId);
+  const showOwner = isGestor() && owner;
+  return `
+    <div class="client-card">
+      <div class="cc-top">
+        <div class="cc-avatar" style="background:${tier.avatarBg};color:${tier.color};">
+          ${getInitials(client.name)}
+        </div>
+        <div>
+          <div class="cc-name">${client.name}</div>
+          <div class="cc-patrimony" style="color:${tier.color};">${fmtMoney(client.patrimony)}</div>
+        </div>
+      </div>
+      ${showOwner ? `<div class="cc-owner">👤 ${owner.name}</div>` : ''}
+      <div class="cc-details">
+        ${client.phone?`<div class="cc-detail"><span>📞</span>${client.phone}</div>`:''}
+        ${client.email?`<div class="cc-detail"><span>✉️</span>${client.email}</div>`:''}
+        ${client.notes?`<div class="cc-detail"><span>📝</span>${client.notes.slice(0,50)}${client.notes.length>50?'…':''}</div>`:''}
+      </div>
+      <div class="cc-freq">
+        <span>Última: ${fmtDate(client.lastMeeting)}</span>
+        <span class="freq-tag ${statusTag}" style="background:${st.status==='overdue'?'var(--red-bg)':st.status==='soon'?'var(--yellow-bg)':'var(--green-bg)'};">
+          ${st.label}
+        </span>
+      </div>
+      ${st.next ? `<div style="font-size:0.7rem;color:var(--text3);margin-top:4px;">Próxima: ${fmtDate(st.next)}</div>` : ''}
+      <div class="cc-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openModalClient('${client.id}','${client.ownerId||''}')">✏️ Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="registerMeeting('${client.id}','${client.ownerId||''}')">📅 Reunião hoje</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient('${client.id}','${client.ownerId||''}')">🗑</button>
+      </div>
+    </div>`;
+}
+
+function registerMeeting(clientId, ownerId) {
+  const oId = ownerId || findClientOwnerId(clientId) || currentUser.id;
+  const d = globalData[oId];
+  if (!d) return;
+  const client = d.clients.find(c=>c.id===clientId);
+  if (!client) return;
+  client.lastMeeting = new Date().toISOString().split('T')[0];
+  if (oId===currentUser.id) state = d;
+  saveGlobalData();
+  renderRelacionamento();
+  toast(`✅ Reunião registrada para ${client.name}!`,'success');
+}
+
+// ── ALERTAS ──
+function renderAlertas() {
+  const wrap = document.getElementById('alertas-list');
+  let clients = isGestor() ? getAllClients() : state.clients;
+  const overdue = clients.filter(c=>getClientStatus(c).status==='overdue');
+  const soon    = clients.filter(c=>getClientStatus(c).status==='soon');
+  if (!overdue.length && !soon.length) {
+    wrap.innerHTML = `<div class="empty-state" style="padding:60px;">
+      <div class="empty-icon" style="font-size:2.5rem;">🎉</div>
+      <p style="font-size:1rem;">Tudo em dia! Nenhum alerta pendente.</p>
+    </div>`;
+    return;
+  }
+  let html = '';
+  if (overdue.length) {
+    html += `<h3 style="color:var(--red);font-size:0.9rem;font-weight:600;margin-bottom:12px;">⚠️ Reuniões Atrasadas (${overdue.length})</h3>`;
+    html += `<div class="client-grid" style="margin-bottom:24px;">` +
+      overdue.map(c=>renderClientCard(c,getTier(c.patrimony))).join('') + '</div>';
+  }
+  if (soon.length) {
+    html += `<h3 style="color:var(--yellow);font-size:0.9rem;font-weight:600;margin-bottom:12px;">🕐 Reuniões Próximas (${soon.length})</h3>`;
+    html += `<div class="client-grid">` +
+      soon.map(c=>renderClientCard(c,getTier(c.patrimony))).join('') + '</div>';
+  }
+  wrap.innerHTML = html;
+}
+
+// ── EQUIPE ──
+function renderEquipe() {
+  const grid = document.getElementById('equipe-grid');
+  if (!users.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><p>Nenhum assessor cadastrado.</p></div>`;
+    return;
+  }
+  grid.innerHTML = users.map(u => {
+    const d = globalData[u.id] || { leads:[], clients:[] };
+    const leads   = d.leads   || [];
+    const clients = d.clients || [];
+    const pat = clients.reduce((s,c)=>s+(Number(c.patrimony)||0),0);
+    const overdue = clients.filter(c=>getClientStatus(c).status==='overdue').length;
+    return `
+      <div class="member-card">
+        <div class="member-header">
+          <div class="member-avatar" style="background:${u.color}">${getInitials(u.name)}</div>
+          <div>
+            <span class="member-badge ${u.role==='gestor'?'badge-gestor':'badge-assessor'}">
+              ${u.role==='gestor'?'⭐ Gestor':'Assessor'}
+            </span>
+            <div class="member-name">${u.name}</div>
+          </div>
+        </div>
+        <div class="member-stats">
+          <div class="mstat"><div class="mstat-val">${leads.length}</div><div class="mstat-lbl">Leads</div></div>
+          <div class="mstat"><div class="mstat-val">${clients.length}</div><div class="mstat-lbl">Clientes</div></div>
+          <div class="mstat" style="grid-column:span 2">
+            <div class="mstat-val" style="font-size:0.85rem;">${fmtMoneyShort(pat)}</div>
+            <div class="mstat-lbl">Patrimônio sob gestão</div>
+          </div>
+        </div>
+        ${overdue ? `<div style="margin-top:10px;font-size:0.75rem;color:var(--red);">⚠️ ${overdue} reunião${overdue>1?'ões':''} atrasada${overdue>1?'s':''}</div>` : ''}
+        <div class="member-actions">
+          <button class="btn btn-ghost btn-sm" onclick="viewMemberData('${u.id}')">👁 Ver carteira</button>
+          ${u.id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑</button>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function viewMemberData(userId) {
+  kanbanOwnerFilter = userId;
+  relOwnerFilter = userId;
+  navigate('relacionamento');
+}
+
+function deleteUser(userId) {
+  const u = getUserById(userId);
+  document.getElementById('confirm-msg').textContent =
+    `Remover "${u?.name}"? Os dados da carteira serão apagados.`;
+  document.getElementById('confirm-ok-btn').onclick = () => {
+    users = users.filter(u=>u.id!==userId);
+    delete globalData[userId];
+    saveUsers();
+    saveGlobalData();
+    closeModal('modal-confirm');
+    renderEquipe();
+    toast('🗑 Assessor removido','info');
+  };
+  openModal('modal-confirm');
+}
+
+// ── IMPORTAR ──
+function setImportOwner(mode) {
+  importOwnerMode = mode;
+  document.getElementById('import-opt-me').classList.toggle('active', mode==='me');
+  document.getElementById('import-opt-other').classList.toggle('active', mode==='other');
+  document.getElementById('import-owner-select-wrap').classList.toggle('hidden', mode==='me');
+}
+
+function initImport() {
+  const zone  = document.getElementById('import-zone');
+  const input = document.getElementById('file-input');
+  input.addEventListener('change', e => handleFile(e.target.files[0]));
+  zone.addEventListener('dragover',  e=>{e.preventDefault();zone.classList.add('dragover');});
+  zone.addEventListener('dragleave', ()=>zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e=>{
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    handleFile(e.dataTransfer.files[0]);
+  });
+}
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type:'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval:'' });
+      parseImportRows(rows);
+    } catch(err) {
+      toast('Erro ao ler arquivo: '+err.message,'error');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function normalizeKey(key) {
+  return key.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[\s_\-]+/g,'');
+}
+
+function parseImportRows(rows) {
+  if (!rows.length) { toast('Arquivo vazio!','error'); return; }
+  const colMap = {
+    nome:         ['nome','name'],
+    email:        ['email','email'],
+    telefone:     ['telefone','phone','celular','tel'],
+    patrimonio:   ['patrimonio','patrimony','patrimônio','valor','saldo'],
+    ultimareuniao:['ultimareuniao','ultimareuniao','dataultimareuniao','lastmeeting','data'],
+    assessor:     ['assessor','owner','responsavel'],
+  };
+  const keys = Object.keys(rows[0]).map(k=>({orig:k,norm:normalizeKey(k)}));
+  function findCol(aliases) {
+    for (const a of aliases) {
+      const match = keys.find(k=>k.norm===a);
+      if (match) return match.orig;
+    }
+    return null;
+  }
+  const colNome    = findCol(colMap.nome);
+  const colEmail   = findCol(colMap.email);
+  const colTel     = findCol(colMap.telefone);
+  const colPat     = findCol(colMap.patrimonio);
+  const colReuniao = findCol(colMap.ultimareuniao);
+  const colAssessor = findCol(colMap.assessor);
+  if (!colNome) { toast('Coluna "Nome" não encontrada!','error'); return; }
+
+  importData = rows.map(row=>({
+    name:        String(row[colNome]||'').trim(),
+    email:       colEmail   ? String(row[colEmail]||'').trim()  : '',
+    phone:       colTel     ? String(row[colTel]||'').trim()    : '',
+    patrimony:   colPat     ? parseFloat(String(row[colPat]||'0').replace(/[^\d.,]/g,'').replace(',','.'))||0 : 0,
+    lastMeeting: colReuniao ? parseImportDate(row[colReuniao])  : new Date().toISOString().split('T')[0],
+    assessorRaw: colAssessor? String(row[colAssessor]||'').trim(): '',
+  })).filter(r=>r.name);
+
+  showImportPreview();
+}
+
+function parseImportDate(val) {
+  if (!val) return new Date().toISOString().split('T')[0];
+  if (typeof val==='number') {
+    const d = XLSX.SSF.parse_date_code(val);
+    if (d) return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+  }
+  const str = String(val);
+  const match = str.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0,10);
+  return new Date().toISOString().split('T')[0];
+}
+
+function resolveImportOwner(row) {
+  // Se a linha tem coluna assessor, tenta resolver
+  if (row.assessorRaw) {
+    const norm = row.assessorRaw.toLowerCase();
+    const found = users.find(u => u.name.toLowerCase().includes(norm) || norm.includes(u.name.toLowerCase().split(' ')[0]));
+    if (found) return found.id;
+  }
+  // Modo importação: 'other' => seletor, 'me' => currentUser
+  if (importOwnerMode === 'other') {
+    const sel = document.getElementById('import-owner-select').value;
+    return sel || currentUser.id;
+  }
+  return currentUser.id;
+}
+
+function showImportPreview() {
+  document.getElementById('import-preview-wrap').classList.remove('hidden');
+  document.getElementById('import-preview-title').textContent = `Preview — ${importData.length} registros`;
+  const table = document.getElementById('import-preview-table');
+  table.innerHTML = `
+    <thead><tr>
+      <th>Nome</th><th>Email</th><th>Telefone</th><th>Patrimônio</th><th>Última Reunião</th><th>Tier (auto)</th><th>Responsável</th>
+    </tr></thead>
+    <tbody>
+      ${importData.slice(0,10).map(r=>{
+        const tier = getTier(r.patrimony);
+        const ownerId = resolveImportOwner(r);
+        const ownerName = getUserById(ownerId)?.name || '—';
+        return `
+          <tr>
+            <td><strong>${r.name}</strong></td>
+            <td>${r.email||'—'}</td>
+            <td>${r.phone||'—'}</td>
+            <td>${fmtMoney(r.patrimony)}</td>
+            <td>${fmtDate(r.lastMeeting)}</td>
+            <td><span style="font-size:0.7rem;padding:2px 7px;border-radius:99px;background:${tier.avatarBg};color:${tier.color};">${tier.label}</span></td>
+            <td style="font-size:0.75rem;">${ownerName}</td>
+          </tr>`;
+      }).join('')}
+      ${importData.length>10?`<tr><td colspan="7" style="color:var(--text3);text-align:center;font-style:italic;">... e mais ${importData.length-10} registros</td></tr>`:''}
+    </tbody>`;
+}
+
+function confirmImport() {
+  if (!importData.length) return;
+  const count = importData.length;
+  importData.forEach(r=>{
+    if (!r.name) return;
+    const ownerId = resolveImportOwner(r);
+    if (!globalData[ownerId]) globalData[ownerId] = { leads:[], clients:[] };
+    globalData[ownerId].clients.push({ id:uid(), ...r, notes:'', ownerId });
+  });
+  if (globalData[currentUser.id]) state = globalData[currentUser.id];
+  saveGlobalData();
+  updateBadges();
+  importData = [];
+  document.getElementById('import-preview-wrap').classList.add('hidden');
+  document.getElementById('file-input').value = '';
+  toast(`✅ ${count} cliente${count>1?'s':''} importado${count>1?'s':''}!`,'success');
+  navigate('relacionamento');
+}
+
+function cancelImport() {
+  importData = [];
+  document.getElementById('import-preview-wrap').classList.add('hidden');
+  document.getElementById('file-input').value = '';
+}
+
+// ── MODAIS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── TOAST ──
+function toast(msg, type='info') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(()=>{
+    el.style.opacity='0';
+    el.style.transform='translateX(20px)';
+    el.style.transition='all 0.3s';
+    setTimeout(()=>el.remove(),300);
+  },3500);
+}
+
+// ── BOOTSTRAP ──
+(function init() {
+  loadUsers();
+  loadGlobalData();
+
+  // Tenta retomar sessão
+  const savedSession = localStorage.getItem(STORAGE_KEY_SESSION);
+  if (savedSession && users.find(u=>u.id===savedSession)) {
+    doLogin(savedSession);
+  } else {
+    renderLoginScreen();
+  }
+})();
+</script>
+</body>
+</html>
