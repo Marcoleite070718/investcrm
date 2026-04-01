@@ -48,18 +48,17 @@ try{
   const app=initializeApp(firebaseConfig);
   const auth=getAuth(app);
   const db=getFirestore(app);
-
-  // Offline persistence
   enableIndexedDbPersistence(db).catch(()=>{});
-
   window._fb={auth,db,signInWithPopup,signOut,OAuthProvider,onAuthStateChanged,
     signInWithEmailAndPassword,createUserWithEmailAndPassword,
     doc,setDoc,getDoc,onSnapshot,collection,query,where};
   window._USE_FIREBASE=true;
-  console.log('[Firebase] ✅ Conectado ao projeto investcrm-4d856');
+  console.log('[Firebase] ✅ Conectado');
+  // Notifica o app principal que Firebase está pronto
+  window.dispatchEvent(new Event('firebase-ready'));
 }catch(err){
   window._USE_FIREBASE=false;
-  console.warn('[Firebase] Falhou, usando localStorage:',err.message);
+  console.warn('[Firebase] Usando localStorage:',err.message);
 }
 </script>
 
@@ -4842,41 +4841,27 @@ setTimeout(renderStreakBar,200);
 (function init(){
 lU();lGD();lP();
 
-// Wait briefly for Firebase module to load, then init
-function startApp(){
-if(window._USE_FIREBASE){
-document.getElementById(‘ms-login-wrap’).style.display=‘none’; // hide MS login for now
-// Check existing Firebase session
-const{auth,onAuthStateChanged}=window._fb;
-onAuthStateChanged(auth,async fbUser=>{
-if(fbUser&&!CU){
-// Auto-resume Firebase session
-await onFirebaseLogin(fbUser);
-}
-});
-}
-// Always also check localStorage session
+// Roda imediatamente — sem esperar Firebase
 const saved=localStorage.getItem(SK_SESSION);
-if(saved&&users.find(u=>u.id===saved)&&!CU){
+if(saved&&users.find(u=>u.id===saved)){
 loginPendingId=saved;
 const u=users.find(x=>x.id===saved);
 if(!u.passwordHash){doLoginConfirm();}
 else{renderLoginScreen();selectUser(saved);}
-}else if(!CU){
+}else{
 renderLoginScreen();
-}
 }
 
-// Give Firebase module 1.5s to load, then start regardless
-setTimeout(startApp, window._USE_FIREBASE===undefined ? 1500 : 0);
-// Fallback: if Firebase takes too long
-setTimeout(()=>{
-if(!CU&&document.getElementById(‘login-screen’).classList.contains(‘hidden’)===false){
-if(document.getElementById(‘login-users-list’).innerHTML===’’){
-renderLoginScreen();
+// Firebase conecta em background depois que carregar
+// Não bloqueia o app
+window.addEventListener(‘firebase-ready’,()=>{
+if(window._USE_FIREBASE&&!CU){
+const{auth,onAuthStateChanged}=window._fb;
+onAuthStateChanged(auth,async fbUser=>{
+if(fbUser&&!CU)await onFirebaseLogin(fbUser);
+});
 }
-}
-},2000);
+});
 })();
 </script>
 
