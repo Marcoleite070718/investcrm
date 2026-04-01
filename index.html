@@ -32,40 +32,34 @@ document.head.appendChild(link);
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getAuth,signInWithPopup,signOut,OAuthProvider,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import{getFirestore,doc,setDoc,getDoc,onSnapshot,collection,query,where}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getAuth,signInWithPopup,signOut,OAuthProvider,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getFirestore,doc,setDoc,getDoc,onSnapshot,collection,query,where,enableIndexedDbPersistence}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// ── FIREBASE CONFIG ──
-// Substitua com suas credenciais do console.firebase.google.com
-const FIREBASE_CONFIG={
-  apiKey:"YOUR_API_KEY",
-  authDomain:"YOUR_PROJECT.firebaseapp.com",
-  projectId:"YOUR_PROJECT_ID",
-  storageBucket:"YOUR_PROJECT.appspot.com",
-  messagingSenderId:"YOUR_SENDER_ID",
-  appId:"YOUR_APP_ID"
+const firebaseConfig={
+  apiKey:"AIzaSyBwMrHyUa-9M7WMeHTSHzz48Y_rph0S5Cc",
+  authDomain:"investcrm-4d856.firebaseapp.com",
+  projectId:"investcrm-4d856",
+  storageBucket:"investcrm-4d856.firebasestorage.app",
+  messagingSenderId:"581583741538",
+  appId:"1:581583741538:web:4dc8fcdb8f2910be47673b"
 };
 
-// Feature flag: false = usa localStorage (modo atual), true = usa Firebase
-const USE_FIREBASE=FIREBASE_CONFIG.apiKey!=='YOUR_API_KEY';
-
-if(USE_FIREBASE){
-  const app=initializeApp(FIREBASE_CONFIG);
+try{
+  const app=initializeApp(firebaseConfig);
   const auth=getAuth(app);
   const db=getFirestore(app);
 
-  // Expõe para o código principal
-  window._fb={auth,db,signInWithPopup,signOut,OAuthProvider,onAuthStateChanged,doc,setDoc,getDoc,onSnapshot,collection,query,where};
+  // Offline persistence
+  enableIndexedDbPersistence(db).catch(()=>{});
+
+  window._fb={auth,db,signInWithPopup,signOut,OAuthProvider,onAuthStateChanged,
+    signInWithEmailAndPassword,createUserWithEmailAndPassword,
+    doc,setDoc,getDoc,onSnapshot,collection,query,where};
   window._USE_FIREBASE=true;
-
-  // Microsoft provider
-  window._msProvider=new OAuthProvider('microsoft.com');
-  window._msProvider.setCustomParameters({tenant:'common',prompt:'select_account'});
-
-  console.log('[Firebase] Modo Firebase ativo');
-}else{
+  console.log('[Firebase] ✅ Conectado ao projeto investcrm-4d856');
+}catch(err){
   window._USE_FIREBASE=false;
-  console.log('[Firebase] Modo localStorage (adicione credenciais para ativar sync)');
+  console.warn('[Firebase] Falhou, usando localStorage:',err.message);
 }
 </script>
 
@@ -4838,6 +4832,8 @@ return`<div class="${cls}" title="${Math.round(w.pct*100)}%"></div>`;
 const _origInitApp=initApp;
 initApp=function(){
 _origInitApp();
+// PWA
+initPWA();
 // Show foco bar
 renderFocoBar();
 // Show streak bar after a tiny delay (needs checklist data)
@@ -4846,32 +4842,41 @@ setTimeout(renderStreakBar,200);
 (function init(){
 lU();lGD();lP();
 
-// Init PWA
-initPWA();
-
-// Show Microsoft login button if Firebase configured
+// Wait briefly for Firebase module to load, then init
+function startApp(){
 if(window._USE_FIREBASE){
-document.getElementById(‘ms-login-wrap’).style.display=‘block’;
-// Check if already logged in via Firebase
+document.getElementById(‘ms-login-wrap’).style.display=‘none’; // hide MS login for now
+// Check existing Firebase session
 const{auth,onAuthStateChanged}=window._fb;
 onAuthStateChanged(auth,async fbUser=>{
-if(fbUser&&document.getElementById(‘login-screen’).classList.contains(‘hidden’)===false){
-// Auto-login if Firebase session still valid
+if(fbUser&&!CU){
+// Auto-resume Firebase session
 await onFirebaseLogin(fbUser);
 }
 });
 }
-
-// Normal localStorage session
+// Always also check localStorage session
 const saved=localStorage.getItem(SK_SESSION);
-if(saved&&users.find(u=>u.id===saved)){
+if(saved&&users.find(u=>u.id===saved)&&!CU){
 loginPendingId=saved;
 const u=users.find(x=>x.id===saved);
 if(!u.passwordHash){doLoginConfirm();}
 else{renderLoginScreen();selectUser(saved);}
-}else{
+}else if(!CU){
 renderLoginScreen();
 }
+}
+
+// Give Firebase module 1.5s to load, then start regardless
+setTimeout(startApp, window._USE_FIREBASE===undefined ? 1500 : 0);
+// Fallback: if Firebase takes too long
+setTimeout(()=>{
+if(!CU&&document.getElementById(‘login-screen’).classList.contains(‘hidden’)===false){
+if(document.getElementById(‘login-users-list’).innerHTML===’’){
+renderLoginScreen();
+}
+}
+},2000);
 })();
 </script>
 
