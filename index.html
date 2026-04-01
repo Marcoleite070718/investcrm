@@ -92,9 +92,9 @@ a{color:inherit;text-decoration:none;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 16px;-webkit-overflow-scrolling:touch;}
 #login-screen.hidden{display:none;}
-.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:100%;max-width:420px;box-shadow:0 24px 80px #000000aa;margin:auto;}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:420px;box-shadow:0 24px 80px #000000aa;margin:auto;}
 .login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center;}
 .login-logo .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
 .login-logo .logo-text{font-family:var(--font-display);font-size:1.5rem;letter-spacing:-0.02em;}
@@ -876,11 +876,11 @@ textarea.form-control{resize:vertical;min-height:68px;}
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo"><div class="logo-icon">📈</div><div class="logo-text">Invest<span>CRM</span></div></div>
-    <div class="login-step active" id="login-step-1">
-      <p class="login-title">Selecione seu perfil</p>
 
 ```
-  <!-- Microsoft Login (Firebase mode) -->
+<!-- Step 1: lista de perfis -->
+<div class="login-step active" id="login-step-1">
+  <p class="login-title">Selecione seu perfil</p>
   <div id="ms-login-wrap" style="display:none;margin-bottom:12px;">
     <button class="login-ms-btn" onclick="loginWithMicrosoft()">
       <div class="ms-logo">
@@ -892,11 +892,12 @@ textarea.form-control{resize:vertical;min-height:68px;}
     <hr class="login-divider"/>
     <p style="font-size:0.72rem;color:var(--text3);text-align:center;margin-bottom:12px;">ou selecione um perfil local</p>
   </div>
-
   <div class="login-users" id="login-users-list"></div>
   <hr class="login-divider"/>
-  <button class="login-new" onclick="openModalNewUser()">＋ Adicionar novo assessor</button>
+  <button class="login-new" onclick="showLoginStep(3)">＋ Adicionar novo assessor</button>
 </div>
+
+<!-- Step 2: senha -->
 <div class="login-step" id="login-step-2">
   <div class="login-pass-header">
     <div class="login-pass-avatar" id="lp-avatar"></div>
@@ -908,9 +909,51 @@ textarea.form-control{resize:vertical;min-height:68px;}
     <div class="login-error" id="lp-error">Senha incorreta.</div>
   </div>
   <div style="display:flex;gap:8px;">
-    <button class="btn btn-ghost btn-sm" onclick="backToUserList()" style="flex:1;">← Voltar</button>
+    <button class="btn btn-ghost btn-sm" onclick="showLoginStep(1)" style="flex:1;">← Voltar</button>
     <button class="btn btn-primary btn-sm" onclick="doLoginConfirm()" style="flex:2;">Entrar →</button>
   </div>
+</div>
+
+<!-- Step 3: criar novo assessor (inline, sem modal) -->
+<div class="login-step" id="login-step-3">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+    <button class="btn btn-ghost btn-sm" onclick="showLoginStep(1)">← Voltar</button>
+    <span style="font-size:0.95rem;font-weight:600;">Novo Assessor</span>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Nome completo *</label>
+    <input type="text" class="form-control" id="ls-nu-name" placeholder="Ex: João Silva"/>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="form-group">
+      <label class="form-label">Papel</label>
+      <select class="form-control" id="ls-nu-role">
+        <option value="assessor">Assessor</option>
+        <option value="gestor">Gestor</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cor</label>
+      <select class="form-control" id="ls-nu-color">
+        <option value="linear-gradient(135deg,#5b7fff,#a78bfa)">Azul/Roxo</option>
+        <option value="linear-gradient(135deg,#3ecf8e,#5b7fff)">Verde/Azul</option>
+        <option value="linear-gradient(135deg,#f5a623,#ff5b5b)">Laranja/Verm.</option>
+        <option value="linear-gradient(135deg,#a78bfa,#f472b6)">Roxo/Rosa</option>
+        <option value="linear-gradient(135deg,#3ecf8e,#f5a623)">Verde/Amarelo</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="form-group">
+      <label class="form-label">Senha *</label>
+      <input type="password" class="form-control" id="ls-nu-pass" placeholder="Mín. 4 chars"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirmar *</label>
+      <input type="password" class="form-control" id="ls-nu-pass2" placeholder="Repita"/>
+    </div>
+  </div>
+  <button class="btn btn-primary" style="width:100%;margin-top:4px;" onclick="saveNewUserInline()">✅ Criar perfil</button>
 </div>
 ```
 
@@ -985,6 +1028,27 @@ textarea.form-control{resize:vertical;min-height:68px;}
     <button class="btn btn-ghost btn-sm" onclick="exportBackup()">⬇️ Backup</button>
     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('restore-input').click()">⬆️ Restaurar</button>
     <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(this)"/>
+  </div>
+
+  <!-- Modo Foco bar -->
+
+  <div class="foco-bar hidden" id="foco-bar">
+    <span class="foco-label">Modo foco:</span>
+    <button class="foco-btn" id="foco-btn-prospeccao" onclick="setFocoMode('prospeccao')">🎯 Prospecção</button>
+    <button class="foco-btn" id="foco-btn-carteira"   onclick="setFocoMode('carteira')">🤝 Carteira</button>
+    <button class="foco-btn" id="foco-btn-livre"      onclick="setFocoMode('livre')">📋 Livre</button>
+    <span class="foco-mode-badge" id="foco-badge" style="display:none;"></span>
+  </div>
+
+  <!-- Streak bar -->
+
+  <div class="streak-bar hidden" id="streak-bar">
+    <span class="streak-fire" id="streak-fire">📅</span>
+    <div style="flex:1;">
+      <div class="streak-text" id="streak-text">Comece sua sequência!</div>
+      <div class="streak-sub" id="streak-sub">Complete o checklist semanal para manter o streak</div>
+    </div>
+    <div class="streak-weeks" id="streak-weeks" style="display:flex;gap:3px;"></div>
   </div>
   <header class="topbar">
     <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
@@ -1713,8 +1777,34 @@ function selectUser(id){
   showLoginStep(2);
   setTimeout(()=>document.getElementById('lp-password').focus(),100);
 }
-function showLoginStep(n){document.getElementById('login-step-1').classList.toggle('active',n===1);document.getElementById('login-step-2').classList.toggle('active',n===2);}
+function showLoginStep(n){
+  document.getElementById('login-step-1').classList.toggle('active',n===1);
+  document.getElementById('login-step-2').classList.toggle('active',n===2);
+  document.getElementById('login-step-3').classList.toggle('active',n===3);
+  if(n===3){
+    // clear form
+    ['ls-nu-name','ls-nu-pass','ls-nu-pass2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    setTimeout(()=>document.getElementById('ls-nu-name')?.focus(),100);
+  }
+}
+
 function backToUserList(){showLoginStep(1);}
+
+function saveNewUserInline(){
+  const name=document.getElementById('ls-nu-name').value.trim();
+  if(!name){toast('Nome obrigatório!','error');return;}
+  const pass=document.getElementById('ls-nu-pass').value;
+  const pass2=document.getElementById('ls-nu-pass2').value;
+  if(pass.length<4){toast('Senha: mín. 4 caracteres!','error');return;}
+  if(pass!==pass2){toast('Senhas não coincidem!','error');return;}
+  const role=document.getElementById('ls-nu-role').value;
+  const color=document.getElementById('ls-nu-color').value;
+  const nu={id:uid(),name,role,color,passwordHash:hashP(pass)};
+  users.push(nu);sU();
+  toast(`✅ Perfil "${name}" criado!`,'success');
+  showLoginStep(1);
+  renderLoginScreen();
+}
 function doLoginConfirm(){
   const u=users.find(x=>x.id===loginPendingId);if(!u)return;
   if(u.passwordHash){const e=hashP(document.getElementById('lp-password').value);if(e!==u.passwordHash){document.getElementById('lp-error').style.display='block';return;}}
@@ -3041,24 +3131,21 @@ renderTagSelector();
 // ── PATCH SAVECLIENT to include tags ──
 const _origSaveClient=saveClient;
 saveClient=function(){
-// Inject tags before saving
-const _origPush=Array.prototype.push;
-// We patch by reading tags after save
 _origSaveClient();
-// Update tags on last saved client
+// After original save, inject tags onto the saved client
 const oid=document.getElementById(‘client-owner’)?.value||CU.id;
 if(globalData[oid]&&globalData[oid].clients.length){
-const last=globalData[oid].clients[globalData[oid].clients.length-1];
-// For edit: find by name match since we don’t have the id easily
 const editId=document.getElementById(‘client-edit-id’)?.value;
 if(editId){
 const c=globalData[oid].clients.find(c=>c.id===editId);
-if(c)c.tags=[…clientTmpTags];
+if(c){c.tags=[…clientTmpTags];}
 }else{
-last.tags=[…clientTmpTags];
+const last=globalData[oid].clients[globalData[oid].clients.length-1];
+if(last)last.tags=[…clientTmpTags];
 }
 if(oid===CU.id)state=globalData[oid];
-sGD();
+// sGD already called by _origSaveClient — no need to call again
+localStorage.setItem(SK_DATA,JSON.stringify(globalData));
 }
 };
 
@@ -4635,6 +4722,127 @@ return html;
 };
 
 // ── BOOTSTRAP ──
+
+// ── MISSING FUNCTIONS FIX ──
+
+// getUserName - used by transfer and other functions
+function getUserName(id){const u=gUB(id);return u?u.name:’—’;}
+
+// ── MODO FOCO ──
+const SK_FOCO=‘icrm_foco_v8’;
+let focoMode=localStorage.getItem(SK_FOCO)||‘livre’; // ‘prospeccao’ | ‘carteira’ | ‘livre’
+
+function setFocoMode(mode){
+focoMode=mode;
+localStorage.setItem(SK_FOCO,mode);
+renderFocoBar();
+// Re-render roteiro with filter if on that page
+const activePage=document.querySelector(’.page.active’)?.id?.replace(‘page-’,’’);
+if(activePage===‘roteiro’)renderRoteiro();
+if(activePage===‘dashboard’)renderDashboard();
+const msgs={
+prospeccao:‘🎯 Modo Prospecção — foco em novos leads’,
+carteira:‘🤝 Modo Carteira — foco nos clientes’,
+livre:‘📋 Modo Livre — visão completa’
+};
+toast(msgs[mode]||‘Modo alterado’,‘info’);
+}
+
+function renderFocoBar(){
+const bar=document.getElementById(‘foco-bar’);
+if(!bar)return;
+bar.classList.remove(‘hidden’);
+// Update button states
+[‘prospeccao’,‘carteira’,‘livre’].forEach(m=>{
+const btn=document.getElementById(‘foco-btn-’+m);
+if(!btn)return;
+btn.className=‘foco-btn’+(focoMode===m?’ active-’+(m===‘livre’?‘carteira’:m):’’);
+if(focoMode===m){
+if(m===‘prospeccao’){btn.style.background=‘var(–accent)’;btn.style.color=’#fff’;btn.style.borderColor=‘var(–accent)’;}
+else if(m===‘carteira’){btn.style.background=‘var(–green)’;btn.style.color=’#fff’;btn.style.borderColor=‘var(–green)’;}
+else{btn.style.background=‘var(–surface2)’;btn.style.color=‘var(–text)’;btn.style.borderColor=‘var(–border2)’;}
+}else{
+btn.style.background=‘none’;btn.style.color=‘var(–text3)’;btn.style.borderColor=‘var(–border)’;
+}
+});
+// Badge
+const badge=document.getElementById(‘foco-badge’);
+if(badge){
+const labels={prospeccao:‘🎯 Prospecção ativo’,carteira:‘🤝 Carteira ativo’,livre:’’};
+const colors={prospeccao:‘var(–accent-glow)’,carteira:‘var(–green-bg)’,livre:’’};
+badge.textContent=labels[focoMode]||’’;
+badge.style.display=focoMode!==‘livre’?’’:‘none’;
+badge.style.background=colors[focoMode]||’’;
+badge.style.color=focoMode===‘prospeccao’?‘var(–accent2)’:focoMode===‘carteira’?‘var(–green)’:’’;
+}
+}
+
+// ── STREAK SEMANAL ──
+function calcStreak(){
+// Look at last 8 weeks of checklist completions
+const weeks=[];
+for(let i=7;i>=0;i–){
+const wr=getWeekRange(-i);
+const st=loadChecklistState(wr.key);
+const items=buildChecklistItems(wr);
+const done=(st.done||[]).length;
+const total=items.length;
+const pct=total>0?done/total:0;
+weeks.push({key:wr.key,pct,done,total,isCurrentWeek:i===0});
+}
+// Count consecutive completed weeks (>=60%) going back from last week
+let streak=0;
+for(let i=weeks.length-2;i>=0;i–){// skip current week
+if(weeks[i].pct>=0.6)streak++;
+else break;
+}
+return{streak,weeks};
+}
+
+function renderStreakBar(){
+const bar=document.getElementById(‘streak-bar’);
+if(!bar)return;
+const{streak,weeks}=calcStreak();
+const cur=weeks[weeks.length-1];
+const curPct=cur.total>0?Math.round(cur.done/cur.total*100):0;
+// Only show if there’s activity or a streak
+if(streak===0&&curPct===0){bar.classList.add(‘hidden’);return;}
+bar.classList.remove(‘hidden’);
+document.getElementById(‘streak-fire’).textContent=streak>=3?‘🔥’:streak>=1?‘✨’:‘📅’;
+const streakText=document.getElementById(‘streak-text’);
+const streakSub=document.getElementById(‘streak-sub’);
+if(streakText){
+if(streak===0)streakText.textContent=‘Comece sua sequência!’;
+else if(streak===1)streakText.textContent=‘1 semana consecutiva’;
+else streakText.textContent=`${streak} semanas seguidas 🔥`;
+}
+if(streakSub){
+streakSub.textContent=cur.total>0
+?`Semana atual: ${cur.done}/${cur.total} tarefas (${curPct}%)`
+:‘Complete o checklist semanal para manter o streak’;
+}
+// Week dots
+const weeksWrap=document.getElementById(‘streak-weeks’);
+if(weeksWrap){
+weeksWrap.innerHTML=weeks.map((w,i)=>{
+let cls=‘streak-week empty’;
+if(w.isCurrentWeek)cls+=’ current’;
+else if(w.pct>=0.6)cls=‘streak-week done’;
+else if(w.pct>0)cls=‘streak-week partial’;
+return`<div class="${cls}" title="${Math.round(w.pct*100)}%"></div>`;
+}).join(’’);
+}
+}
+
+// Patch initApp to show foco bar, streak bar and set initial mode
+const _origInitApp=initApp;
+initApp=function(){
+_origInitApp();
+// Show foco bar
+renderFocoBar();
+// Show streak bar after a tiny delay (needs checklist data)
+setTimeout(renderStreakBar,200);
+};
 (function init(){
 lU();lGD();lP();
 
