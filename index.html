@@ -208,7 +208,20 @@ a{color:inherit;text-decoration:none;}
 .card-loss-reason{font-size:0.7rem;color:var(--red);background:var(--red-bg);padding:4px 7px;border-radius:5px;margin-bottom:8px;}
 
 /* RELACIONAMENTO */
-.rel-content{padding:20px;display:flex;flex-direction:column;gap:16px;}
+.rel-content{padding:0;display:flex;flex-direction:column;gap:0;overflow:hidden;height:100%;}
+.rel-kanban{display:flex;gap:0;overflow-x:auto;overflow-y:hidden;height:100%;align-items:flex-start;padding:0;}
+.rel-col{min-width:260px;width:260px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100%;max-height:100%;}
+.rel-col-header{padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.rel-col-title{font-size:0.82rem;font-weight:700;}
+.rel-col-sub{font-size:0.67rem;color:var(--text3);margin-top:2px;}
+.rel-col-cards{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;}
+.rel-col-cards.drag-over{background:var(--accent-glow);}
+.rel-col-empty{color:var(--text3);font-size:0.75rem;text-align:center;padding:20px 10px;border:1px dashed var(--border);border-radius:var(--radius-sm);}
+.rel-client-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:grab;transition:all 0.15s;}
+.rel-client-card:hover{border-color:var(--border2);box-shadow:0 4px 12px #00000044;}
+.rel-client-card.overdue{border-color:#ff5b5b44;background:#ff5b5b04;}
+.rel-client-card:active{cursor:grabbing;}
+@media(max-width:768px){.rel-col{min-width:230px;width:230px;}.rel-kanban{padding-bottom:70px;}}
 .tier-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .tier-header{padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
 .tier-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
@@ -716,7 +729,49 @@ textarea.form-control{resize:vertical;min-height:68px;}
 .inactive-badge{background:#64748b22;color:#64748b;font-size:0.65rem;padding:2px 6px;border-radius:99px;font-weight:600;}
 .sn-calc-tip{background:var(--accent-glow);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px 16px;font-size:0.78rem;line-height:1.6;}
 
-.roteiro-page{padding:16px 20px;display:flex;flex-direction:column;gap:14px;}
+/* ── PIPELINE BUTTONS ── */
+.pipeline-btn{padding:7px 10px;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:600;border:2px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.pipeline-btn.active-quente{background:#ff5b5b22;border-color:#ff5b5b;color:#ff5b5b;}
+.pipeline-btn.active-frio{background:#5b7fff22;border-color:#5b7fff;color:var(--accent2);}
+.pipeline-btn.active-congelado{background:#a78bfa22;border-color:#a78bfa;color:#a78bfa;}
+.pip-badge{font-size:0.65rem;padding:2px 7px;border-radius:99px;font-weight:700;}
+.pip-quente{background:#ff5b5b22;color:#ff5b5b;}
+.pip-frio{background:#5b7fff22;color:var(--accent2);}
+.pip-congelado{background:#a78bfa22;color:#a78bfa;}
+/* ── ALERT CARDS ── */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:16px;}
+.alert-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all 0.3s;}
+@media(max-width:600px){.alert-grid{grid-template-columns:1fr;}}
+/* ── PIPELINE BUTTONS ── */
+.pipeline-btn{padding:7px 10px;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:600;border:2px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.pipeline-btn.active-quente{background:#ff5b5b22;border-color:#ff5b5b;color:#ff5b5b;}
+.pipeline-btn.active-frio{background:#5b7fff22;border-color:#5b7fff;color:var(--accent2);}
+.pipeline-btn.active-congelado{background:#a78bfa22;border-color:#a78bfa;color:#a78bfa;}
+.pip-badge{font-size:0.65rem;padding:2px 7px;border-radius:99px;font-weight:700;}
+.pip-quente{background:#ff5b5b22;color:#ff5b5b;}
+.pip-frio{background:#5b7fff22;color:var(--accent2);}
+.pip-congelado{background:#a78bfa22;color:#a78bfa;}
+/* ── ALERT CARDS ── */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-bottom:16px;}
+.alert-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all 0.3s;}
+@media(max-width:600px){.alert-grid{grid-template-columns:1fr;}}
+/* ── GRUPOS FAMILIARES ── */
+.grupos-page{padding:16px 20px;display:flex;flex-direction:column;gap:16px;}
+.grupo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.grupo-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.grupo-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;flex-shrink:0;}
+.grupo-name{font-size:1rem;font-weight:700;}
+.grupo-aum{font-size:0.78rem;color:var(--green);font-weight:600;}
+.grupo-count{font-size:0.72rem;color:var(--text3);}
+.grupo-members{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;padding:12px 16px;}
+.grupo-member{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;display:flex;align-items:center;gap:10px;}
+.grupo-member-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;}
+.grupo-member-name{font-size:0.8rem;font-weight:500;flex:1;}
+.grupo-member-pat{font-size:0.72rem;font-weight:600;}
+.grupo-member-rel{font-size:0.65rem;color:var(--text3);}
+.grupo-actions{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:var(--bg3);}
+.grupo-empty{padding:32px;text-align:center;color:var(--text3);font-size:0.8rem;}
+</style>
 .roteiro-date{font-size:0.78rem;color:var(--text3);}
 .roteiro-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .roteiro-section-header{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
@@ -943,6 +998,7 @@ textarea.form-control{resize:vertical;min-height:68px;}
     <div class="sidebar-section-label">Gestão</div>
     <ul class="sidebar-nav">
       <li><button onclick="navigate('equipe')" id="nav-equipe"><span class="nav-icon">👥</span>Equipe</button></li>
+      <li><button onclick="navigate('grupos')" id="nav-grupos"><span class="nav-icon">👨‍👩‍👧‍👦</span>Grupos Familiares<span class="nav-badge" id="badge-grupos" style="background:var(--purple);display:none;">0</span></button></li>
       <li><button onclick="navigate('supernova')" id="nav-supernova"><span class="nav-icon">⭐</span>Supernova<span class="nav-badge" id="badge-supernova" style="background:var(--yellow);">0</span></button></li>
     </ul>
   </div>
@@ -1054,7 +1110,7 @@ textarea.form-control{resize:vertical;min-height:68px;}
 
     <!-- RELACIONAMENTO -->
     <div class="page" id="page-relacionamento">
-      <div class="page-scroll"><div class="rel-content" id="rel-content"></div></div>
+      <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;"><div class="rel-content" id="rel-content"></div></div>
     </div>
 
     <!-- PLANO MENSAL -->
@@ -1222,6 +1278,11 @@ textarea.form-control{resize:vertical;min-height:68px;}
       <div class="page-scroll"><div id="supernova-wrap" style="padding:20px 24px;display:flex;flex-direction:column;gap:18px;"></div></div>
     </div>
 
+    <!-- GRUPOS FAMILIARES -->
+    <div class="page" id="page-grupos">
+      <div class="page-scroll"><div class="grupos-page" id="grupos-wrap"></div></div>
+    </div>
+
     <!-- ROTEIRO DO DIA -->
     <div class="page" id="page-roteiro">
       <div class="page-scroll"><div class="roteiro-page" id="roteiro-wrap"></div></div>
@@ -1275,7 +1336,14 @@ textarea.form-control{resize:vertical;min-height:68px;}
         <div class="form-group"><label class="form-label">Origem</label><select class="form-control" id="lead-source"><option>Indicação</option><option>LinkedIn</option><option>Instagram</option><option>Site</option><option>Evento</option><option>Outbound</option><option>Outro</option></select></div>
         <div class="form-group"><label class="form-label">Etapa</label><select class="form-control" id="lead-stage"><option value="prospeccao">Prospecção</option><option value="reuniao1">1ª Reunião</option><option value="reuniao2">2ª Reunião</option><option value="planejamento">Planejamento</option></select></div>
       </div>
-      <div class="form-group"><label class="form-label">Responsável</label><select class="form-control" id="lead-owner"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Patrimônio estimado (R$)</label><input type="number" class="form-control" id="lead-patrimony" placeholder="0"/></div>
+        <div class="form-group"><label class="form-label">Responsável</label><select class="form-control" id="lead-owner"></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">📅 Data da próxima reunião</label><input type="date" class="form-control" id="lead-meeting-date"/></div>
+        <div class="form-group"><label class="form-label">🕐 Horário</label><input type="time" class="form-control" id="lead-meeting-time" value="10:00"/></div>
+      </div>
       <div class="form-group"><label class="form-label">Observações</label><textarea class="form-control" id="lead-notes" placeholder="Informações adicionais..."></textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-lead')">Cancelar</button><button class="btn btn-primary" onclick="saveLead()">💾 Salvar</button></div>
@@ -1344,6 +1412,16 @@ textarea.form-control{resize:vertical;min-height:68px;}
       <div class="form-row">
         <div class="form-group"><label class="form-label">Valor previsto (R$) <span class="req">*</span></label><input type="number" class="form-control" id="pl-valor" placeholder="0"/></div>
         <div class="form-group"><label class="form-label">Receita gerada (R$)</label><input type="number" class="form-control" id="pl-receita" placeholder="0"/></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pipeline</label>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="pipeline-btn" id="pip-quente" onclick="setPipeline('quente')" style="flex:1;">🔥 Quente</button>
+          <button type="button" class="pipeline-btn" id="pip-frio" onclick="setPipeline('frio')" style="flex:1;">❄️ Frio</button>
+          <button type="button" class="pipeline-btn" id="pip-congelado" onclick="setPipeline('congelado')" style="flex:1;">🧊 Congelado</button>
+        </div>
+        <input type="hidden" id="pl-pipeline" value="quente"/>
+        <div style="font-size:0.7rem;color:var(--text3);margin-top:4px;">🔥 Quente = confirmado · ❄️ Frio = boas chances · 🧊 Congelado = em tratativa</div>
       </div>
       <div class="form-group"><label class="form-label">Observação</label><input type="text" class="form-control" id="pl-obs" placeholder="Detalhe adicional..."/></div>
       <input type="hidden" id="pl-edit-idx" value="-1"/>
@@ -1549,6 +1627,108 @@ textarea.form-control{resize:vertical;min-height:68px;}
       </div>
       <!-- Timeline list -->
       <div class="timeline-list" id="tl-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Agendar Reunião (cliente) -->
+<div class="modal-overlay" id="modal-agendar-reuniao">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <span class="modal-title">📅 Agendar Reunião — <span id="ar-client-name"></span></span>
+      <button class="modal-close" onclick="closeModal('modal-agendar-reuniao')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ar-client-id"/>
+      <input type="hidden" id="ar-owner-id"/>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Data <span class="req">*</span></label><input type="date" class="form-control" id="ar-date"/></div>
+        <div class="form-group"><label class="form-label">Horário</label><input type="time" class="form-control" id="ar-time" value="10:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Pauta / Observação</label><input type="text" class="form-control" id="ar-note" placeholder="Ex: Revisão de carteira, apresentação CDB..."/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-agendar-reuniao')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmAgendarReuniao()">📅 Agendar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Pedir data ao arrastar no Kanban -->
+<div class="modal-overlay" id="modal-drag-date">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title" id="drag-date-title">Agendar próxima reunião</span>
+      <button class="modal-close" onclick="closeModal('modal-drag-date')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dd-lead-id"/>
+      <input type="hidden" id="dd-owner-id"/>
+      <input type="hidden" id="dd-stage"/>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Data <span class="req">*</span></label><input type="date" class="form-control" id="dd-date"/></div>
+        <div class="form-group"><label class="form-label">Horário</label><input type="time" class="form-control" id="dd-time" value="10:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Observação</label><input type="text" class="form-control" id="dd-note" placeholder="Pauta da reunião..."/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="skipDragDate()">Pular</button>
+      <button class="btn btn-primary" onclick="confirmDragDate()">✅ Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Novo/Editar Grupo Familiar -->
+<div class="modal-overlay" id="modal-grupo">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-grupo-title">Novo Grupo Familiar</span>
+      <button class="modal-close" onclick="closeModal('modal-grupo')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="grupo-edit-id"/>
+      <div class="form-row">
+        <div class="form-group" style="grid-column:span 2">
+          <label class="form-label">Nome do grupo / família <span class="req">*</span></label>
+          <input type="text" class="form-control" id="grupo-nome" placeholder="Ex: Família Silva, Grupo João..."/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Cor do grupo</label>
+          <select class="form-control" id="grupo-color">
+            <option value="linear-gradient(135deg,#5b7fff,#a78bfa)">Azul/Roxo</option>
+            <option value="linear-gradient(135deg,#3ecf8e,#5b7fff)">Verde/Azul</option>
+            <option value="linear-gradient(135deg,#f5a623,#ff5b5b)">Laranja/Verm.</option>
+            <option value="linear-gradient(135deg,#a78bfa,#f472b6)">Roxo/Rosa</option>
+            <option value="linear-gradient(135deg,#3ecf8e,#f5a623)">Verde/Amarelo</option>
+            <option value="linear-gradient(135deg,#ff5b5b,#f472b6)">Vermelho/Rosa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observações</label>
+          <input type="text" class="form-control" id="grupo-obs" placeholder="Notas sobre o grupo..."/>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:0.83rem;font-weight:600;margin-bottom:10px;">👥 Membros do Grupo</div>
+      <div id="grupo-members-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;max-height:200px;overflow-y:auto;"></div>
+      <div style="display:flex;gap:8px;">
+        <select class="form-control" id="grupo-add-client" style="flex:1;"></select>
+        <select class="form-control" id="grupo-add-rel" style="width:150px;">
+          <option value="titular">Titular</option>
+          <option value="cônjuge">Cônjuge</option>
+          <option value="filho(a)">Filho(a)</option>
+          <option value="pai/mãe">Pai/Mãe</option>
+          <option value="sócio">Sócio</option>
+          <option value="outro">Outro</option>
+        </select>
+        <button class="btn btn-success btn-sm" onclick="addGrupoMember()">＋ Add</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-grupo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveGrupo()">💾 Salvar Grupo</button>
     </div>
   </div>
 </div>
@@ -1923,6 +2103,8 @@ function renderCard(lead,stage){
   return`<div class="kanban-card${isWon?' won-card':isLost?' lost-card':''}" data-id="${lead.id}" draggable="true">
     <div class="card-name">${lead.name}</div>
     <span class="card-source" style="background:${sc.bg};color:${sc.color};">${lead.source||'—'}</span>
+    ${lead.patrimony?`<div style="font-size:0.72rem;color:var(--green);font-weight:600;margin-bottom:4px;">💰 Est. ${fmtMS(lead.patrimony)}</div>`:''}
+    ${lead.nextMeetingDate?`<div style="font-size:0.72rem;color:var(--accent2);margin-bottom:4px;">📅 ${fmtD(lead.nextMeetingDate)}${lead.nextMeetingTime?' às '+lead.nextMeetingTime:''}</div>`:''}
     ${isGestor()&&owner?`<div class="card-owner">👤 ${owner.name}</div>`:''}
     ${lead.lossReason?`<div class="card-loss-reason">Motivo: ${lead.lossReason}${lead.lossNote?` — ${lead.lossNote}`:''}</div>`:''}
     <div class="card-details">
@@ -1937,6 +2119,7 @@ function renderCard(lead,stage){
         ${!isLost?`<button class="card-action-btn btn-won" title="Ganho" onclick="moveLeadTo('${lead.id}','${lead.ownerId||''}','ganho')">🏆</button>`:''}
         ${!isLost?`<button class="card-action-btn btn-lost" title="Perdido" onclick="openModalLost('${lead.id}','${lead.ownerId||''}')">❌</button>`:''}
         <button class="card-action-btn" title="Editar" onclick="openModalLead(null,'${lead.id}','${lead.ownerId||''}')">✏️</button>
+        <button class="card-action-btn" title="Histórico" onclick="openTimeline('lead','${lead.id}','${lead.ownerId||''}')">📋</button>
         <button class="card-action-btn" title="Excluir" onclick="deleteLead('${lead.id}','${lead.ownerId||''}')">🗑️</button>
       </div>
     </div>
@@ -1981,12 +2164,52 @@ function onDrop(e,targetStage){
   e.preventDefault();e.currentTarget.classList.remove('drag-over');
   if(!dragLeadId)return;
   if(targetStage==='perdido'){openModalLost(dragLeadId,'');dragLeadId=null;return;}
+  // Ask for date/time when moving to meeting stages
+  if(['reuniao1','reuniao2','planejamento'].includes(targetStage)){
+    const stageLabels={reuniao1:'1ª Reunião',reuniao2:'2ª Reunião',planejamento:'Planejamento'};
+    document.getElementById('drag-date-title').textContent=`Agendar — ${stageLabels[targetStage]}`;
+    document.getElementById('dd-lead-id').value=dragLeadId;
+    document.getElementById('dd-owner-id').value='';
+    document.getElementById('dd-stage').value=targetStage;
+    document.getElementById('dd-date').value=now();
+    document.getElementById('dd-time').value='10:00';
+    document.getElementById('dd-note').value='';
+    dragLeadId=null;
+    openModal('modal-drag-date');
+    return;
+  }
   moveLeadTo(dragLeadId,'',targetStage);dragLeadId=null;
+}
+function confirmDragDate(){
+  const leadId=document.getElementById('dd-lead-id').value;
+  const stage=document.getElementById('dd-stage').value;
+  const date=document.getElementById('dd-date').value;
+  const time=document.getElementById('dd-time').value;
+  const note=document.getElementById('dd-note').value.trim();
+  if(!date){toast('Selecione a data!','error');return;}
+  const oid=findLO(leadId)||CU.id;
+  const d=globalData[oid];if(!d)return;
+  const lead=d.leads.find(l=>l.id===leadId);if(!lead)return;
+  lead.stage=stage;lead.lastInteraction=now();
+  lead.nextMeetingDate=date;lead.nextMeetingTime=time;
+  if(note)lead.notes=(lead.notes?lead.notes+'\n':'')+note;
+  if(oid===CU.id)state=d;sGD();
+  closeModal('modal-drag-date');renderKanban();updateBadges();
+  toast(`📅 ${date?fmtD(date):''} às ${time} agendado!`,'success');
+}
+function skipDragDate(){
+  const leadId=document.getElementById('dd-lead-id').value;
+  const stage=document.getElementById('dd-stage').value;
+  closeModal('modal-drag-date');
+  moveLeadTo(leadId,'',stage);
 }
 
 // CRUD Leads
 function openModalLead(stageId,editId,editOid){
   ['lead-edit-id','lead-name','lead-phone','lead-email','lead-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('lead-patrimony').value='';
+  document.getElementById('lead-meeting-date').value='';
+  document.getElementById('lead-meeting-time').value='10:00';
   document.getElementById('lead-source').value='Indicação';document.getElementById('lead-stage').value='prospeccao';
   document.getElementById('lead-owner').value=CU.id;
   if(editId){
@@ -1997,6 +2220,9 @@ function openModalLead(stageId,editId,editOid){
     document.getElementById('lead-phone').value=lead.phone||'';document.getElementById('lead-email').value=lead.email||'';
     document.getElementById('lead-source').value=lead.source||'Indicação';document.getElementById('lead-stage').value=lead.stage||'prospeccao';
     document.getElementById('lead-notes').value=lead.notes||'';document.getElementById('lead-owner').value=o;
+    document.getElementById('lead-patrimony').value=lead.patrimony||'';
+    document.getElementById('lead-meeting-date').value=lead.nextMeetingDate||'';
+    document.getElementById('lead-meeting-time').value=lead.nextMeetingTime||'10:00';
   }else{document.getElementById('modal-lead-title').textContent='Novo Lead';if(stageId)document.getElementById('lead-stage').value=stageId;}
   openModal('modal-lead');
 }
@@ -2004,7 +2230,12 @@ function saveLead(){
   const name=document.getElementById('lead-name').value.trim();if(!name){toast('Nome obrigatório!','error');return;}
   const oid=document.getElementById('lead-owner').value||CU.id;
   const editId=document.getElementById('lead-edit-id').value;
-  const data={name,phone:document.getElementById('lead-phone').value.trim(),email:document.getElementById('lead-email').value.trim(),source:document.getElementById('lead-source').value,stage:document.getElementById('lead-stage').value,notes:document.getElementById('lead-notes').value.trim(),lastInteraction:now(),ownerId:oid};
+  const data={name,phone:document.getElementById('lead-phone').value.trim(),email:document.getElementById('lead-email').value.trim(),
+    source:document.getElementById('lead-source').value,stage:document.getElementById('lead-stage').value,
+    notes:document.getElementById('lead-notes').value.trim(),lastInteraction:now(),ownerId:oid,
+    patrimony:parseFloat(document.getElementById('lead-patrimony').value)||0,
+    nextMeetingDate:document.getElementById('lead-meeting-date').value||null,
+    nextMeetingTime:document.getElementById('lead-meeting-time').value||null};
   if(!globalData[oid])globalData[oid]={leads:[],clients:[]};
   if(editId){const old=findLO(editId);if(old&&old!==oid)globalData[old].leads=globalData[old].leads.filter(l=>l.id!==editId);const idx=globalData[oid].leads.findIndex(l=>l.id===editId);if(idx>-1)globalData[oid].leads[idx]={...globalData[oid].leads[idx],...data};else globalData[oid].leads.push({id:editId,...data});toast('✅ Lead atualizado!','success');}
   else{globalData[oid].leads.push({id:uid(),...data});toast('✅ Lead criado!','success');}
@@ -2082,13 +2313,134 @@ function renderRelacionamento(){
   if(relFilter)clients=clients.filter(c=>c.name.toLowerCase().includes(relFilter.toLowerCase()));
   const wrap=document.getElementById('rel-content');
   if(!clients.length){wrap.innerHTML=`<div class="empty-state" style="padding:50px;"><div class="ei" style="font-size:2rem;">📋</div><p style="font-size:0.9rem;">Nenhum cliente. Use <strong>Importar Clientes</strong> ou adicione manualmente.</p></div>`;return;}
-  let html='';
-  TIERS.forEach(tier=>{
-    const tc=clients.filter(c=>getTier(c.patrimony).id===tier.id);if(!tc.length)return;
-    const tp=tc.reduce((s,c)=>s+(Number(c.patrimony)||0),0);
-    html+=`<div class="tier-section"><div class="tier-header"><span class="tier-dot" style="background:${tier.color};box-shadow:0 0 5px ${tier.color}66;"></span><div style="flex:1;"><div class="tier-title">${tier.label}</div><div style="font-size:0.68rem;color:var(--text3);margin-top:1px;">${tier.scheduleDetail}</div></div><span class="tier-schedule">${tier.range} · ${fmtMS(tp)}</span><span class="tier-count" style="margin-left:8px;">${tc.length}</span></div><div class="client-grid">${tc.map(c=>renderClientCard(c,tier)).join('')}</div></div>`;
-  });
-  wrap.innerHTML=html;
+
+  // Separar inativos (patrimônio = 0 ou < 1000)
+  const inativos=clients.filter(c=>(Number(c.patrimony)||0)<1000);
+  const ativos=clients.filter(c=>(Number(c.patrimony)||0)>=1000);
+
+  // Colunas: T4 → T3 → T2 → T1 → Inativos
+  const cols=[
+    ...TIERS.slice().reverse().map(tier=>({
+      id:tier.id, label:tier.label, color:tier.color,
+      range:tier.range, scheduleDetail:tier.scheduleDetail,
+      clients:ativos.filter(c=>getTier(c.patrimony).id===tier.id)
+    })).filter(col=>col.clients.length>0),
+    {id:'inativo',label:'😴 Inativos',color:'#64748b',range:'Saldo < R$1.000',
+     scheduleDetail:'Sem saldo ativo — reativar ou transferir',
+     clients:inativos}
+  ];
+
+  wrap.innerHTML=`<div class="rel-kanban">${cols.map(col=>{
+    const tp=col.clients.reduce((s,c)=>s+(Number(c.patrimony)||0),0);
+    return`<div class="rel-col" ondragover="relDragOver(event)" ondrop="relDrop(event,'${col.id}')" ondragleave="relDragLeave(event)">
+      <div class="rel-col-header" style="border-top:3px solid ${col.color};">
+        <div>
+          <div class="rel-col-title">${col.label}</div>
+          <div class="rel-col-sub">${col.range}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.72rem;font-weight:700;color:${col.color};">${fmtMS(tp)}</div>
+          <div style="font-size:0.68rem;color:var(--text3);">${col.clients.length} cliente${col.clients.length!==1?'s':''}</div>
+        </div>
+      </div>
+      <div class="rel-col-cards">
+        ${col.clients.length?col.clients.map(c=>renderClientCardCompact(c,col)).join('')
+          :`<div class="rel-col-empty">Arraste aqui</div>`}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderClientCardCompact(c,col){
+  const tier=getTier(c.patrimony);
+  const st=getClientStatus(c);
+  const stColor=st.status==='overdue'?'var(--red)':st.status==='soon'?'var(--yellow)':'var(--green)';
+  const stBg=st.status==='overdue'?'var(--red-bg)':st.status==='soon'?'var(--yellow-bg)':'var(--green-bg)';
+  const isInativo=(Number(c.patrimony)||0)<1000;
+  return`<div class="rel-client-card${st.status==='overdue'?' overdue':''}" draggable="true"
+    data-id="${c.id}" data-owner="${c.ownerId||''}"
+    ondragstart="relDragStart(event,'${c.id}','${c.ownerId||''}')">
+    <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:${isInativo?'#64748b22':tier.avatarBg};color:${isInativo?'#64748b':tier.color};display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;">${ini(c.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.name}</div>
+        <div style="font-size:0.72rem;font-weight:600;color:${isInativo?'#64748b':tier.color};">${fmtM(c.patrimony)}</div>
+      </div>
+      <span style="font-size:0.62rem;padding:1px 6px;border-radius:99px;background:${stBg};color:${stColor};white-space:nowrap;align-self:flex-start;">${st.label}</span>
+    </div>
+    ${c.conta?`<div style="font-size:0.68rem;color:var(--text3);margin-bottom:5px;">Conta: ${c.conta}</div>`:''}
+    ${st.status!=='demand'&&st.next?`<div style="font-size:0.7rem;color:${stColor};margin-bottom:5px;">📅 ${st.status==='overdue'?'Atrasado':'Próximo'}: ${fmtD(st.next)}</div>`:''}
+    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="openModalClient('${c.id}','${c.ownerId||''}')">✏️</button>
+      <button class="btn btn-success btn-sm" onclick="openAgendarReuniao('${c.id}','${c.ownerId||''}')">📅</button>
+      ${c.phone?`<a class="btn btn-success btn-sm" href="https://wa.me/55${c.phone.replace(/\D/g,'')}" target="_blank">💬</a>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="openTimeline('client','${c.id}','${c.ownerId||''}')">📋</button>
+    </div>
+  </div>`;
+}
+
+// Drag entre colunas de relacionamento
+let relDragClientId=null,relDragOwnerId=null;
+function relDragStart(e,clientId,ownerId){relDragClientId=clientId;relDragOwnerId=ownerId;e.dataTransfer.effectAllowed='move';}
+function relDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function relDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function relDrop(e,targetTierId){
+  e.preventDefault();e.currentTarget.classList.remove('drag-over');
+  if(!relDragClientId)return;
+  const oid=relDragOwnerId||findCO(relDragClientId)||CU.id;
+  const d=globalData[oid];if(!d)return;
+  const client=d.clients.find(c=>c.id===relDragClientId);if(!client)return;
+  // If dragging to inativo, mark as 0
+  if(targetTierId==='inativo'){
+    if(!confirm('Marcar cliente como inativo (patrimônio = 0)?'))return;
+    client.patrimony=0;
+  } else {
+    // Find target tier min value to bump patrimony into that tier
+    const tierMap={'t1':1000,'t2':150001,'t3':300001,'t4':1000001};
+    const newPat=tierMap[targetTierId];
+    if(newPat&&(Number(client.patrimony)||0)<newPat){
+      // Only bump if would move to a higher tier
+      const currentTier=getTier(client.patrimony);
+      if(currentTier.id!==targetTierId){
+        toast('Para mover entre tiers, edite o patrimônio no cadastro.','info');
+        relDragClientId=null;return;
+      }
+    }
+  }
+  if(oid===CU.id)state=d;sGD();renderRelacionamento();updateBadges();
+  relDragClientId=null;relDragOwnerId=null;
+}
+
+// Agendar reunião com data e hora (modal rápido)
+function openAgendarReuniao(clientId,ownerId){
+  const oid=ownerId||findCO(clientId)||CU.id;
+  const d=globalData[oid];if(!d)return;
+  const client=d.clients.find(c=>c.id===clientId);if(!client)return;
+  document.getElementById('ar-client-name').textContent=client.name;
+  document.getElementById('ar-client-id').value=clientId;
+  document.getElementById('ar-owner-id').value=oid;
+  document.getElementById('ar-date').value=now();
+  document.getElementById('ar-time').value='10:00';
+  document.getElementById('ar-note').value='';
+  openModal('modal-agendar-reuniao');
+}
+function confirmAgendarReuniao(){
+  const clientId=document.getElementById('ar-client-id').value;
+  const oid=document.getElementById('ar-owner-id').value;
+  const date=document.getElementById('ar-date').value;
+  const time=document.getElementById('ar-time').value;
+  const note=document.getElementById('ar-note').value.trim();
+  if(!date){toast('Selecione a data!','error');return;}
+  const d=globalData[oid];if(!d)return;
+  const client=d.clients.find(c=>c.id===clientId);if(!client)return;
+  if(!client.meetings)client.meetings=[];
+  client.meetings.push({date,time,note:note||'Reunião agendada'});
+  // Also add to timeline
+  if(!client.timeline)client.timeline=[];
+  client.timeline.unshift({id:uid(),type:'reuniao',date,time,text:note||'Reunião agendada',ts:new Date().toISOString()});
+  if(oid===CU.id)state=d;sGD();
+  closeModal('modal-agendar-reuniao');renderRelacionamento();updateBadges();
+  toast(`📅 Reunião agendada para ${fmtD(date)} às ${time}!`,'success');
 }
 function renderClientCard(c,tier){
   const st=getClientStatus(c);
@@ -2121,11 +2473,49 @@ function renderAlertas(){
   let clients=isGestor()?allClients():state.clients;
   const overdue=clients.filter(c=>getClientStatus(c).status==='overdue');
   const soon=clients.filter(c=>getClientStatus(c).status==='soon');
-  if(!overdue.length&&!soon.length){wrap.innerHTML=`<div class="empty-state" style="padding:50px;"><div class="ei" style="font-size:2rem;">🎉</div><p style="font-size:0.95rem;">Tudo em dia!</p></div>`;return;}
+  if(!overdue.length&&!soon.length){wrap.innerHTML=`<div class="empty-state" style="padding:50px;"><div class="ei" style="font-size:2rem;">🎉</div><p style="font-size:0.95rem;">Tudo em dia! Nenhum contato pendente.</p></div>`;return;}
+  const renderAlertCard=(c)=>{
+    const tier=getTier(c.patrimony);
+    const st=getClientStatus(c);
+    const stColor=st.status==='overdue'?'var(--red)':'var(--yellow)';
+    return`<div class="alert-card" id="alert-card-${c.id}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${tier.avatarBg};color:${tier.color};display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">${ini(c.name)}</div>
+        <div style="flex:1;">
+          <div style="font-size:0.85rem;font-weight:600;">${c.name}</div>
+          <div style="font-size:0.72rem;color:${stColor};">${st.status==='overdue'?'Contato atrasado':'Contato em breve'} · ${fmtM(c.patrimony)}</div>
+        </div>
+        ${c.phone?`<a class="btn btn-success btn-sm" href="https://wa.me/55${c.phone.replace(/\D/g,'')}" target="_blank">💬</a>`:''}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-success btn-sm" onclick="alertConcluir('${c.id}','${c.ownerId||''}','reuniao','Reunião realizada')">✅ Reunião feita</button>
+        <button class="btn btn-ghost btn-sm" onclick="alertConcluir('${c.id}','${c.ownerId||''}','ligacao','Ligação realizada')">📞 Liguei</button>
+        <button class="btn btn-ghost btn-sm" onclick="alertConcluir('${c.id}','${c.ownerId||''}','whatsapp','Contato via WhatsApp')">💬 WhatsApp</button>
+        <button class="btn btn-ghost btn-sm" onclick="openAgendarReuniao('${c.id}','${c.ownerId||''}')">📅 Agendar</button>
+      </div>
+    </div>`;
+  };
   let html='';
-  if(overdue.length){html+=`<h3 style="color:var(--red);font-size:0.88rem;font-weight:600;margin-bottom:10px;">⚠️ Contatos Atrasados (${overdue.length})</h3><div class="client-grid" style="margin-bottom:20px;">${overdue.map(c=>renderClientCard(c,getTier(c.patrimony))).join('')}</div>`;}
-  if(soon.length){html+=`<h3 style="color:var(--yellow);font-size:0.88rem;font-weight:600;margin-bottom:10px;">🕐 Contatos Próximos (${soon.length})</h3><div class="client-grid">${soon.map(c=>renderClientCard(c,getTier(c.patrimony))).join('')}</div>`;}
+  if(overdue.length){html+=`<div style="font-size:0.82rem;font-weight:600;color:var(--red);margin-bottom:10px;">⚠️ Contatos Atrasados (${overdue.length})</div><div class="alert-grid" style="margin-bottom:20px;">${overdue.map(c=>renderAlertCard(c)).join('')}</div>`;}
+  if(soon.length){html+=`<div style="font-size:0.82rem;font-weight:600;color:var(--yellow);margin-bottom:10px;">🕐 Contatos Próximos (${soon.length})</div><div class="alert-grid">${soon.map(c=>renderAlertCard(c)).join('')}</div>`;}
   wrap.innerHTML=html;
+}
+function alertConcluir(clientId,ownerId,type,note){
+  const oid=ownerId||findCO(clientId)||CU.id;
+  const d=globalData[oid];if(!d)return;
+  const client=d.clients.find(c=>c.id===clientId);if(!client)return;
+  // Register in meetings
+  if(!client.meetings)client.meetings=[];
+  client.meetings.push({date:now(),note});
+  // Register in timeline
+  if(!client.timeline)client.timeline=[];
+  client.timeline.unshift({id:uid(),type,date:now(),text:note,ts:new Date().toISOString()});
+  if(oid===CU.id)state=d;sGD();
+  // Remove card from alerts with animation
+  const card=document.getElementById('alert-card-'+clientId);
+  if(card){card.style.transition='all 0.3s';card.style.opacity='0';card.style.transform='translateX(20px)';setTimeout(()=>{card.remove();updateBadges();},300);}
+  toast(`✅ ${note} registrado no histórico de ${client.name}!`,'success');
+  updateBadges();
 }
 
 // ── PLANO MENSAL ──
@@ -2140,16 +2530,29 @@ function renderPlano(){
   const pct=meta>0?Math.min(100,Math.round(capLiq/meta*100)):0;
   const barColor=pct>=100?'#3ecf8e':pct>=70?'#f5a623':'#5b7fff';
 
+  // Pipeline breakdown
+  const pipLabels={quente:'🔥 Quente',frio:'❄️ Frio',congelado:'🧊 Congelado'};
+  const pipColors={quente:'#ff5b5b',frio:'var(--accent2)',congelado:'#a78bfa'};
+  const pipBgs={quente:'#ff5b5b22',frio:'#5b7fff22',congelado:'#a78bfa22'};
+  const aportes=p.linhas.filter(l=>l.tipo==='aporte');
+  const pipSummary=['quente','frio','congelado'].map(pip=>{
+    const lines=aportes.filter(l=>(l.pipeline||'quente')===pip);
+    const val=lines.reduce((s,l)=>s+(Number(l.valor)||0),0);
+    return{pip,val,count:lines.length};
+  }).filter(x=>x.count>0);
+
   // Build linhas table rows
-  const linhasHtml=p.linhas.length?p.linhas.map((l,i)=>`<tr>
+  const linhasHtml=p.linhas.length?p.linhas.map((l,i)=>{
+    const pip=l.pipeline||'quente';
+    return`<tr>
     <td><strong>${l.clientName||l.clientId}</strong></td>
     <td>${l.produto||'—'}</td>
     <td><span class="chip" style="background:${l.tipo==='aporte'?'var(--green-bg)':'var(--red-bg)'};color:${l.tipo==='aporte'?'var(--green)':'var(--red)'};">${l.tipo==='aporte'?'Aporte':'Resgate'}</span></td>
     <td style="color:${l.tipo==='aporte'?'var(--green)':'var(--red)'};">${l.tipo==='resgate'?'-':''}${fmtM(l.valor)}</td>
+    <td><span class="pip-badge pip-${pip}">${pipLabels[pip]||pip}</span></td>
     <td style="color:var(--yellow);">${l.receita?fmtM(l.receita):'—'}</td>
-    <td style="font-size:0.72rem;color:var(--text3);">${l.obs||'—'}</td>
     <td><div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-xs" onclick="editPlanoLinha(${i})">✏️</button><button class="btn btn-danger btn-xs" onclick="deletePlanoLinha(${i})">🗑</button></div></td>
-  </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;color:var(--text3);font-style:italic;padding:16px;">Nenhum lançamento. Clique em + para adicionar.</td></tr>`;
+  </tr>`;}).join(''):`<tr><td colspan="7" style="text-align:center;color:var(--text3);font-style:italic;padding:16px;">Nenhum lançamento. Clique em + para adicionar.</td></tr>`;
 
   const acoesHtml=p.acoes.length?p.acoes.map((a,i)=>`<div class="action-item"><div class="action-item-client">${a.clientName||'—'}</div><div class="action-item-produto">${a.produto||'—'}</div><div class="action-item-valor">${a.valor?fmtM(a.valor):''}</div><div class="action-item-obs">${a.obs||''}</div><button class="action-item-del" onclick="deletePlanoAcao(${i})">✕</button></div>`).join(''):`<div style="padding:12px 18px;font-size:0.78rem;color:var(--text3);font-style:italic;">Nenhuma ação planejada ainda.</div>`;
 
@@ -2197,6 +2600,15 @@ function renderPlano(){
   <!-- Receita -->
   ${totalRec?`<div style="background:var(--yellow-bg);border:1px solid #f5a62333;border-radius:var(--radius-sm);padding:10px 16px;font-size:0.85rem;color:var(--yellow);">💰 Receita total prevista no mês: <strong>${fmtM(totalRec)}</strong></div>`:''}
 
+  <!-- Pipeline summary -->
+  ${pipSummary.length?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+    ${pipSummary.map(ps=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;">
+      <div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px;">${{quente:'🔥 Quente',frio:'❄️ Frio',congelado:'🧊 Congelado'}[ps.pip]}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:${pipColors[ps.pip]};">${fmtM(ps.val)}</div>
+      <div style="font-size:0.68rem;color:var(--text3);">${ps.count} lançamento${ps.count!==1?'s':''}</div>
+    </div>`).join('')}
+  </div>`:''}
+
   <!-- Aportes/Resgates table -->
   <div class="plano-table-wrap">
     <div class="plano-table-header">
@@ -2204,9 +2616,9 @@ function renderPlano(){
       <button class="btn btn-primary btn-sm" onclick="openPlanoLinha()">＋ Adicionar</button>
     </div>
     <div style="overflow-x:auto;"><table class="pt">
-      <thead><tr><th>Cliente</th><th>Produto</th><th>Tipo</th><th>Valor</th><th>Receita</th><th>Obs</th><th></th></tr></thead>
+      <thead><tr><th>Cliente</th><th>Produto</th><th>Tipo</th><th>Valor</th><th>Pipeline</th><th>Receita</th><th></th></tr></thead>
       <tbody>${linhasHtml}</tbody>
-      ${p.linhas.length?`<tfoot><tr><td colspan="2"><strong>Total</strong></td><td></td><td style="color:${capLiq>=0?'var(--green)':'var(--red)'};">${capLiq>=0?'+':''}${fmtM(capLiq)}</td><td style="color:var(--yellow);">${totalRec?fmtM(totalRec):''}</td><td colspan="2"></td></tr></tfoot>`:''}
+      ${p.linhas.length?`<tfoot><tr><td colspan="2"><strong>Total</strong></td><td></td><td style="color:${capLiq>=0?'var(--green)':'var(--red)'};">${capLiq>=0?'+':''}${fmtM(capLiq)}</td><td></td><td style="color:var(--yellow);">${totalRec?fmtM(totalRec):''}</td><td></td></tr></tfoot>`:''}
     </table></div>
   </div>
 
@@ -2249,18 +2661,31 @@ function populatePlanoClientSelect(selId){
   const sel=document.getElementById(selId);
   sel.innerHTML=clients.map(c=>`<option value="${c.id}" data-name="${c.name}">${c.name}${c.conta?` (${c.conta})`:''}</option>`).join('');
 }
+function setPipeline(val){
+  document.getElementById('pl-pipeline').value=val;
+  ['quente','frio','congelado'].forEach(p=>{
+    const btn=document.getElementById('pip-'+p);
+    btn.className='pipeline-btn'+(val===p?' active-'+p:'');
+  });
+}
 function openPlanoLinha(editIdx=-1){
   populatePlanoClientSelect('pl-client');
   ['pl-produto','pl-obs'].forEach(id=>document.getElementById(id).value='');
   ['pl-valor','pl-receita'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pl-tipo').value='aporte';document.getElementById('pl-edit-idx').value=editIdx;
+  document.getElementById('pl-tipo').value='aporte';
+  document.getElementById('pl-edit-idx').value=editIdx;
   document.getElementById('plano-linha-title').textContent=editIdx>=0?'Editar Lançamento':'Adicionar Lançamento';
+  setPipeline('quente');
   if(editIdx>=0){
     const l=getPlano(planoMes).linhas[editIdx];
-    const sel=document.getElementById('pl-client');for(let i=0;i<sel.options.length;i++)if(sel.options[i].value===l.clientId){sel.selectedIndex=i;break;}
-    document.getElementById('pl-produto').value=l.produto||'';document.getElementById('pl-tipo').value=l.tipo||'aporte';
-    document.getElementById('pl-valor').value=l.valor||'';document.getElementById('pl-receita').value=l.receita||'';
+    const sel=document.getElementById('pl-client');
+    for(let i=0;i<sel.options.length;i++)if(sel.options[i].value===l.clientId){sel.selectedIndex=i;break;}
+    document.getElementById('pl-produto').value=l.produto||'';
+    document.getElementById('pl-tipo').value=l.tipo||'aporte';
+    document.getElementById('pl-valor').value=l.valor||'';
+    document.getElementById('pl-receita').value=l.receita||'';
     document.getElementById('pl-obs').value=l.obs||'';
+    setPipeline(l.pipeline||'quente');
   }
   openModal('modal-plano-linha');
 }
@@ -2270,7 +2695,13 @@ function savePlanoLinha(){
   const clientId=sel.value;const clientName=sel.options[sel.selectedIndex]?.text||'';
   const valor=parseFloat(document.getElementById('pl-valor').value)||0;
   if(!clientId||!valor){toast('Cliente e valor são obrigatórios!','error');return;}
-  const linha={clientId,clientName,produto:document.getElementById('pl-produto').value.trim(),tipo:document.getElementById('pl-tipo').value,valor,receita:parseFloat(document.getElementById('pl-receita').value)||0,obs:document.getElementById('pl-obs').value.trim()};
+  const pipeline=document.getElementById('pl-pipeline').value||'quente';
+  const linha={clientId,clientName,
+    produto:document.getElementById('pl-produto').value.trim(),
+    tipo:document.getElementById('pl-tipo').value,valor,
+    receita:parseFloat(document.getElementById('pl-receita').value)||0,
+    obs:document.getElementById('pl-obs').value.trim(),
+    pipeline};
   const p=getPlano(planoMes);const idx=parseInt(document.getElementById('pl-edit-idx').value);
   if(idx>=0)p.linhas[idx]=linha;else p.linhas.push(linha);
   sP();closeModal('modal-plano-linha');renderPlano();toast('✅ Lançamento salvo!','success');
@@ -2341,15 +2772,30 @@ function setCalView(v){calView=v;document.getElementById('cal-btn-week').classLi
 function calNav(dir){if(calView==='week')calDate=new Date(calDate.getTime()+dir*7*86400000);else{calDate=new Date(calDate.getFullYear(),calDate.getMonth()+dir,1);}renderCalendar();}
 function calGoToday(){calDate=new Date();renderCalendar();}
 function getCalEvents(){
-  const clients=isGestor()?allClients():state.clients;const events=[];
+  const clients=isGestor()?allClients():state.clients;
+  const leads=isGestor()?allLeads():state.leads;
+  const events=[];
+  // Client past meetings
   clients.forEach(c=>{
     const tier=getTier(c.patrimony);
-    if(c.meetings)c.meetings.forEach(m=>{events.push({date:m.date,type:'meeting',label:`📅 ${c.name}`,note:m.note||'Reunião',clientId:c.id,clientName:c.name,ownerId:c.ownerId});});
+    if(c.meetings)c.meetings.forEach(m=>{
+      events.push({date:m.date,time:m.time||null,type:'meeting',label:`📅 ${c.name}`,note:(m.time?m.time+' — ':'')+( m.note||'Reunião'),clientId:c.id,clientName:c.name,ownerId:c.ownerId});
+    });
     const lastDate=getLastMtgDate(c);
-    if(lastDate){if(tier.meetingDays){const nxt=addDays(lastDate,tier.meetingDays);events.push({date:nxt,type:'scheduled',label:`🗓 ${c.name}`,note:`Reunião projetada`,clientId:c.id,clientName:c.name,ownerId:c.ownerId,projected:true});}
-    if(tier.callDays&&tier.callDays!==tier.meetingDays){const nxt=addDays(lastDate,tier.callDays);events.push({date:nxt,type:'call',label:`📞 ${c.name}`,note:`Ligação projetada`,clientId:c.id,clientName:c.name,ownerId:c.ownerId,projected:true});}}
+    if(lastDate){
+      if(tier.meetingDays){const nxt=addDays(lastDate,tier.meetingDays);events.push({date:nxt,type:'scheduled',label:`🗓 ${c.name}`,note:'Reunião projetada',clientId:c.id,clientName:c.name,ownerId:c.ownerId,projected:true});}
+      if(tier.callDays&&tier.callDays!==tier.meetingDays){const nxt=addDays(lastDate,tier.callDays);events.push({date:nxt,type:'call',label:`📞 ${c.name}`,note:'Ligação projetada',clientId:c.id,clientName:c.name,ownerId:c.ownerId,projected:true});}
+    }
   });
-  // Also add plano reunioes
+  // Lead meetings with date set
+  leads.filter(l=>l.nextMeetingDate&&!['ganho','perdido'].includes(l.stage)).forEach(l=>{
+    const stageLabel=STAGES.find(s=>s.id===l.stage)?.label||l.stage;
+    events.push({date:l.nextMeetingDate,time:l.nextMeetingTime||null,type:'scheduled',
+      label:`🎯 ${l.name}`,
+      note:`${l.nextMeetingTime?l.nextMeetingTime+' — ':''}${stageLabel}${l.patrimony?` · Est. ${fmtMS(l.patrimony)}`:''}`,
+      clientName:l.name,ownerId:l.ownerId,isLead:true});
+  });
+  // Plano reunioes
   Object.entries(planoData).forEach(([key,p])=>{
     (p.reunioes||[]).forEach(r=>{events.push({date:r.date,type:'scheduled',label:`📋 ${r.clientName}`,note:`${r.tipo}${r.obs?` — ${r.obs}`:''}`,clientName:r.clientName,projected:false});});
   });
@@ -3044,6 +3490,7 @@ Object.assign(PCFG,{
   analytics: {title:'Analytics',         sub:'Funil, conversão e histórico'},
   checklist: {title:'Checklist Semanal', sub:'Tarefas da semana'},
   supernova: {title:'⭐ Supernova',       sub:'Segmentação de carteira'},
+  grupos:    {title:'👨‍👩‍👧‍👦 Grupos Familiares', sub:'Acompanhamento por família'},
 });
 
 // ── PATCH UPDATEBADGES to include roteiro ──
@@ -3061,6 +3508,7 @@ navigate=function(page){
   if(page==='analytics')renderAnalytics();
   if(page==='checklist')renderChecklist();
   if(page==='supernova')renderSupernova();
+  if(page==='grupos')renderGrupos();
 };
 
 // ── PATCH OPENCLIENT MODAL to include tags ──
@@ -4746,6 +5194,317 @@ renderCard = function(lead, stage) {
   );
   return html;
 };
+
+// ══════════════════════════════════════════
+// GRUPOS FAMILIARES
+// ══════════════════════════════════════════
+
+const SK_GRUPOS = 'icrm_grupos_v9';
+let gruposData = []; // [{id, nome, color, obs, members:[{clientId,ownerId,rel}]}]
+let grupoTmpMembers = [];
+
+function loadGrupos(){
+  const raw = localStorage.getItem(SK_GRUPOS);
+  gruposData = raw ? JSON.parse(raw) : [];
+}
+function saveGrupos(){
+  localStorage.setItem(SK_GRUPOS, JSON.stringify(gruposData));
+}
+
+function renderGrupos(){
+  loadGrupos();
+  const wrap = document.getElementById('grupos-wrap');
+  const allC = allClients();
+
+  // Update badge
+  const badge = document.getElementById('badge-grupos');
+  if(badge){ badge.textContent = gruposData.length; badge.style.display = gruposData.length ? '' : 'none'; }
+
+  // Enrich groups with client data
+  const enriched = gruposData.map(g => {
+    const members = (g.members||[]).map(m => {
+      const client = allC.find(c => c.id === m.clientId);
+      return client ? {...m, client} : null;
+    }).filter(Boolean);
+    const totalAum = members.reduce((s,m) => s + (Number(m.client.patrimony)||0), 0);
+    return {...g, members, totalAum};
+  }).sort((a,b) => b.totalAum - a.totalAum);
+
+  // Clients not in any group
+  const inGroupIds = new Set(gruposData.flatMap(g => (g.members||[]).map(m=>m.clientId)));
+  const semGrupo = allC.filter(c => !inGroupIds.has(c.id) && (Number(c.patrimony)||0) >= 1000);
+
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:3px;">Grupos Familiares</h2>
+        <p style="color:var(--text3);font-size:0.78rem;">${gruposData.length} grupo${gruposData.length!==1?'s':''} · Agrupe contas de uma mesma família para visão consolidada</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModalGrupo()">＋ Novo Grupo</button>
+    </div>
+
+    ${!enriched.length ? `<div class="grupo-empty"><div style="font-size:2rem;margin-bottom:8px;">👨‍👩‍👧‍👦</div><div>Nenhum grupo criado ainda.</div><div style="margin-top:4px;color:var(--text3);">Crie um grupo para reunir contas de uma mesma família.</div></div>` : ''}
+
+    ${enriched.map(g => renderGrupoCard(g)).join('')}
+
+    ${semGrupo.length ? `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <span style="font-size:0.85rem;font-weight:600;flex:1;">📋 Clientes sem grupo (${semGrupo.length})</span>
+        <span style="font-size:0.72rem;color:var(--text3);">${fmtMS(semGrupo.reduce((s,c)=>s+(Number(c.patrimony)||0),0))} AUM</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;padding:12px 16px;">
+        ${semGrupo.slice(0,20).map(c => {
+          const tier = getTier(c.patrimony);
+          return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:${tier.avatarBg};color:${tier.color};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;">${ini(c.name)}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.78rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.name}</div>
+              <div style="font-size:0.68rem;color:${tier.color};">${fmtM(c.patrimony)}</div>
+            </div>
+          </div>`;
+        }).join('')}
+        ${semGrupo.length > 20 ? `<div style="padding:8px;font-size:0.72rem;color:var(--text3);">+${semGrupo.length-20} mais</div>` : ''}
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function renderGrupoCard(g){
+  const stColors = {'overdue':'var(--red)','soon':'var(--yellow)','ok':'var(--green)','demand':'var(--text3)'};
+  const overdueCount = g.members.filter(m => getClientStatus(m.client).status === 'overdue').length;
+
+  const membersHtml = g.members.map(m => {
+    const tier = getTier(m.client.patrimony);
+    const st = getClientStatus(m.client);
+    const pct = g.totalAum > 0 ? Math.round((Number(m.client.patrimony)||0)/g.totalAum*100) : 0;
+    return `<div class="grupo-member">
+      <div class="grupo-member-avatar" style="background:${tier.avatarBg};color:${tier.color};">${ini(m.client.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="grupo-member-name">${m.client.name}</div>
+        <div class="grupo-member-rel">${m.rel||'Membro'} · ${pct}% do grupo</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="grupo-member-pat" style="color:${tier.color};">${fmtM(m.client.patrimony)}</div>
+        <div style="font-size:0.62rem;color:${stColors[st.status]||'var(--text3)'};">${st.label}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="padding:2px 6px;margin-left:4px;" onclick="openModalClient('${m.client.id}','${m.client.ownerId||''}')">✏️</button>
+    </div>`;
+  }).join('');
+
+  // AUM bar per member
+  const aumBar = g.members.map(m => {
+    const tier = getTier(m.client.patrimony);
+    const pct = g.totalAum > 0 ? Math.round((Number(m.client.patrimony)||0)/g.totalAum*100) : 0;
+    return `<div title="${m.client.name}: ${fmtM(m.client.patrimony)}" style="height:100%;width:${pct}%;background:${tier.color};"></div>`;
+  }).join('');
+
+  return `<div class="grupo-card">
+    <div class="grupo-header">
+      <div class="grupo-avatar" style="background:${g.color||'var(--accent)'};">${(g.nome||'G').charAt(0).toUpperCase()}</div>
+      <div style="flex:1;">
+        <div class="grupo-name">${g.nome}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:2px;">
+          <span class="grupo-aum">${fmtMS(g.totalAum)} AUM total</span>
+          <span class="grupo-count">${g.members.length} conta${g.members.length!==1?'s':''}</span>
+          ${overdueCount ? `<span style="font-size:0.68rem;color:var(--red);font-weight:600;">⚠️ ${overdueCount} atrasado${overdueCount!==1?'s':''}</span>` : ''}
+        </div>
+        ${g.obs ? `<div style="font-size:0.72rem;color:var(--text3);margin-top:2px;">📝 ${g.obs}</div>` : ''}
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="openModalGrupo('${g.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGrupo('${g.id}')">🗑</button>
+      </div>
+    </div>
+    <!-- AUM distribution bar -->
+    <div style="height:6px;display:flex;overflow:hidden;">${aumBar}</div>
+    <!-- Members grid -->
+    <div class="grupo-members">${membersHtml || '<div style="color:var(--text3);font-size:0.78rem;padding:8px;">Nenhum membro. Edite o grupo para adicionar.</div>'}</div>
+    <!-- Actions -->
+    <div class="grupo-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openGrupoTimeline('${g.id}')">📋 Histórico consolidado</button>
+      <button class="btn btn-success btn-sm" onclick="openGrupoAgendar('${g.id}')">📅 Agendar para o grupo</button>
+      ${g.members.some(m=>m.client.phone) ? `<button class="btn btn-success btn-sm" onclick="openGrupoWA('${g.id}')">💬 WhatsApp</button>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── CRUD GRUPOS ──
+function openModalGrupo(editId){
+  grupoTmpMembers = [];
+  document.getElementById('grupo-nome').value = '';
+  document.getElementById('grupo-obs').value = '';
+  document.getElementById('grupo-color').value = 'linear-gradient(135deg,#5b7fff,#a78bfa)';
+  document.getElementById('grupo-edit-id').value = '';
+  document.getElementById('modal-grupo-title').textContent = 'Novo Grupo Familiar';
+
+  if(editId){
+    loadGrupos();
+    const g = gruposData.find(x=>x.id===editId);
+    if(!g)return;
+    document.getElementById('grupo-edit-id').value = editId;
+    document.getElementById('grupo-nome').value = g.nome||'';
+    document.getElementById('grupo-obs').value = g.obs||'';
+    document.getElementById('grupo-color').value = g.color||'linear-gradient(135deg,#5b7fff,#a78bfa)';
+    document.getElementById('modal-grupo-title').textContent = 'Editar Grupo';
+    grupoTmpMembers = [...(g.members||[])];
+  }
+
+  // Populate client select
+  const allC = allClients();
+  const sel = document.getElementById('grupo-add-client');
+  sel.innerHTML = '<option value="">Selecione o cliente...</option>' +
+    allC.map(c=>`<option value="${c.id}" data-owner="${c.ownerId||''}">${c.name} — ${fmtM(c.patrimony)}</option>`).join('');
+
+  renderGrupoMembersList();
+  openModal('modal-grupo');
+}
+
+function renderGrupoMembersList(){
+  const wrap = document.getElementById('grupo-members-list');
+  const allC = allClients();
+  if(!grupoTmpMembers.length){
+    wrap.innerHTML = '<div style="color:var(--text3);font-size:0.78rem;padding:6px;">Nenhum membro adicionado ainda.</div>';
+    return;
+  }
+  wrap.innerHTML = grupoTmpMembers.map((m,i) => {
+    const client = allC.find(c=>c.id===m.clientId);
+    if(!client)return'';
+    const tier = getTier(client.patrimony);
+    return`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="width:26px;height:26px;border-radius:50%;background:${tier.avatarBg};color:${tier.color};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;">${ini(client.name)}</div>
+      <div style="flex:1;font-size:0.8rem;font-weight:500;">${client.name}</div>
+      <div style="font-size:0.7rem;color:var(--accent2);">${m.rel||'Membro'}</div>
+      <div style="font-size:0.72rem;color:${tier.color};">${fmtM(client.patrimony)}</div>
+      <button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.8rem;padding:2px;" onclick="removeGrupoMember(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function addGrupoMember(){
+  const sel = document.getElementById('grupo-add-client');
+  const clientId = sel.value;
+  if(!clientId){toast('Selecione um cliente!','error');return;}
+  if(grupoTmpMembers.find(m=>m.clientId===clientId)){toast('Cliente já está no grupo!','info');return;}
+  const ownerId = sel.options[sel.selectedIndex]?.dataset?.owner||'';
+  const rel = document.getElementById('grupo-add-rel').value;
+  grupoTmpMembers.push({clientId, ownerId, rel});
+  sel.value = '';
+  renderGrupoMembersList();
+}
+
+function removeGrupoMember(idx){
+  grupoTmpMembers.splice(idx,1);
+  renderGrupoMembersList();
+}
+
+function saveGrupo(){
+  const nome = document.getElementById('grupo-nome').value.trim();
+  if(!nome){toast('Nome do grupo obrigatório!','error');return;}
+  loadGrupos();
+  const editId = document.getElementById('grupo-edit-id').value;
+  const grupo = {
+    id: editId||uid(),
+    nome,
+    color: document.getElementById('grupo-color').value,
+    obs: document.getElementById('grupo-obs').value.trim(),
+    members: [...grupoTmpMembers],
+    createdAt: editId ? (gruposData.find(g=>g.id===editId)?.createdAt||now()) : now(),
+  };
+  if(editId){
+    const idx = gruposData.findIndex(g=>g.id===editId);
+    if(idx>-1)gruposData[idx]=grupo; else gruposData.push(grupo);
+  } else {
+    gruposData.push(grupo);
+  }
+  saveGrupos();
+  closeModal('modal-grupo');
+  renderGrupos();
+  toast(`✅ Grupo "${nome}" salvo!`,'success');
+}
+
+function deleteGrupo(id){
+  document.getElementById('confirm-msg').textContent='Excluir este grupo familiar? Os clientes não serão afetados.';
+  document.getElementById('confirm-ok-btn').onclick=()=>{
+    loadGrupos();
+    gruposData=gruposData.filter(g=>g.id!==id);
+    saveGrupos();closeModal('modal-confirm');renderGrupos();
+    toast('🗑 Grupo removido','info');
+  };
+  openModal('modal-confirm');
+}
+
+// ── GRUPO ACTIONS ──
+function openGrupoTimeline(grupoId){
+  loadGrupos();
+  const g = gruposData.find(x=>x.id===grupoId);
+  if(!g)return;
+  const allC = allClients();
+  // Collect all timeline entries from all members
+  const entries = [];
+  (g.members||[]).forEach(m => {
+    const client = allC.find(c=>c.id===m.clientId);
+    if(!client)return;
+    (client.timeline||[]).forEach(e=>entries.push({...e,clientName:client.name}));
+    (client.meetings||[]).forEach(mt=>entries.push({
+      id:`mtg_${mt.date}_${client.id}`,type:'reuniao',date:mt.date,
+      text:mt.note||'Reunião',ts:mt.date+'T12:00:00Z',clientName:client.name
+    }));
+  });
+  entries.sort((a,b)=>(b.ts||b.date).localeCompare(a.ts||a.date));
+
+  // Show in a simple modal
+  const TL_ICONS={reuniao:'📅',ligacao:'📞',nota:'📝',whatsapp:'💬',email:'✉️',aporte:'💰',resgate:'💸',outros:'📌',sistema:'🤖'};
+  document.getElementById('ev-title').textContent=`📋 ${g.nome} — Histórico consolidado`;
+  document.getElementById('ev-body').innerHTML = entries.length
+    ? `<div style="max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
+        ${entries.slice(0,50).map(e=>`
+          <div style="display:flex;gap:10px;padding:8px;background:var(--bg3);border-radius:var(--radius-sm);">
+            <span style="font-size:0.9rem;">${TL_ICONS[e.type]||'📌'}</span>
+            <div style="flex:1;">
+              <div style="font-size:0.72rem;color:var(--accent2);font-weight:600;">${e.clientName}</div>
+              <div style="font-size:0.78rem;">${e.text||'—'}</div>
+              <div style="font-size:0.68rem;color:var(--text3);">${fmtD(e.date)}</div>
+            </div>
+          </div>`).join('')}
+        ${entries.length>50?`<div style="text-align:center;font-size:0.72rem;color:var(--text3);">+${entries.length-50} mais</div>`:''}
+      </div>`
+    : `<div class="empty-state"><div class="ei">📋</div><p>Nenhum histórico ainda.</p></div>`;
+  openModal('modal-event');
+}
+
+function openGrupoAgendar(grupoId){
+  loadGrupos();
+  const g = gruposData.find(x=>x.id===grupoId);
+  if(!g||!g.members?.length){toast('Grupo sem membros!','error');return;}
+  // Agendar para o primeiro membro e depois propagar
+  const allC = allClients();
+  const firstMember = g.members.find(m=>allC.find(c=>c.id===m.clientId));
+  if(!firstMember)return;
+  const client = allC.find(c=>c.id===firstMember.clientId);
+  toast(`Agendar reunião — escolhendo ${client.name} como representante do grupo`,'info');
+  openAgendarReuniao(firstMember.clientId, firstMember.ownerId);
+}
+
+function openGrupoWA(grupoId){
+  loadGrupos();
+  const g = gruposData.find(x=>x.id===grupoId);
+  if(!g)return;
+  const allC = allClients();
+  const withPhone = g.members.map(m=>allC.find(c=>c.id===m.clientId)).filter(c=>c&&c.phone);
+  if(!withPhone.length){toast('Nenhum membro com telefone cadastrado.','info');return;}
+  if(withPhone.length===1){
+    window.open('https://wa.me/55'+withPhone[0].phone.replace(/\D/g,''),'_blank');
+    return;
+  }
+  // Multiple: show a quick picker
+  const names = withPhone.map((c,i)=>`${i+1}. ${c.name}`).join('\n');
+  const choice = prompt(`Qual membro contatar?\n${names}\n\nDigite o número:`);
+  const idx = parseInt(choice)-1;
+  if(idx>=0&&idx<withPhone.length){
+    window.open('https://wa.me/55'+withPhone[idx].phone.replace(/\D/g,''),'_blank');
+  }
+}
 
 // ── BOOTSTRAP ──
 
