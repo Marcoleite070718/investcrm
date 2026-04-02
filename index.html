@@ -1782,7 +1782,17 @@ function lU(){const r=localStorage.getItem(SK_USERS);users=r?JSON.parse(r):[];}
 function sGD(){localStorage.setItem(SK_DATA,JSON.stringify(globalData));}
 function lGD(){const r=localStorage.getItem(SK_DATA);globalData=r?JSON.parse(r):{};}
 function sP(){localStorage.setItem(SK_PLANO,JSON.stringify(planoData));}
-function lP(){const r=localStorage.getItem(SK_PLANO);planoData=r?JSON.parse(r):{};}
+function lP(){
+  const r=localStorage.getItem(SK_PLANO);
+  const raw=r?JSON.parse(r):{};
+  // Migration: if old format (keys like "2025-08"), wrap under _global
+  const firstKey=Object.keys(raw)[0]||'';
+  if(firstKey && firstKey.match(/^\d{4}-\d{2}$/)){
+    planoData={_global:raw};
+  } else {
+    planoData=raw;
+  }
+}
 function saveState(){if(!CU)return;globalData[CU.id]=JSON.parse(JSON.stringify(state));sGD();}
 function lSU(id){state=globalData[id]?JSON.parse(JSON.stringify(globalData[id])):{leads:[],clients:[]};}
 
@@ -1862,7 +1872,13 @@ function allClients(){let a=[];users.forEach(u=>{const d=globalData[u.id];if(d&&
 function findLO(id){for(const u of users){const d=globalData[u.id];if(d&&d.leads&&d.leads.find(l=>l.id===id))return u.id;}return null;}
 function findCO(id){for(const u of users){const d=globalData[u.id];if(d&&d.clients&&d.clients.find(c=>c.id===id))return u.id;}return null;}
 function hashP(p){let h=0;for(let i=0;i<p.length;i++)h=(Math.imul(31,h)+p.charCodeAt(i))|0;return h.toString(36);}
-function getPlano(key){if(!planoData[key])planoData[key]={meta:0,textoPlan:'',linhas:[],acoes:[],reunioes:[]};return planoData[key];}
+function getPlano(key,uid2){
+  const uid3=uid2||(CU?CU.id:'_global');
+  if(!planoData[uid3])planoData[uid3]={};
+  if(!planoData[uid3][key])planoData[uid3][key]={meta:0,textoPlan:'',linhas:[],acoes:[],reunioes:[]};
+  return planoData[uid3][key];
+}
+function getPlanoForUser(uid2){return planoData[uid2]||{};}
 
 // ── LOGIN ──
 let loginPendingId=null;
@@ -2011,7 +2027,7 @@ function renderDashboard(){
 }
 
 function renderDashMeta(){
-  const p=getPlano(planoMes);
+  const p=getPlano(planoMes,CU?CU.id:null);
   const sec=document.getElementById('dash-meta-section');
   const totalAp=p.linhas.filter(l=>l.tipo==='aporte').reduce((s,l)=>s+(Number(l.valor)||0),0);
   const totalRe=p.linhas.filter(l=>l.tipo==='resgate').reduce((s,l)=>s+(Number(l.valor)||0),0);
@@ -2521,7 +2537,7 @@ function alertConcluir(clientId,ownerId,type,note){
 // ── PLANO MENSAL ──
 function renderPlano(){
   const wrap=document.getElementById('plano-wrap');
-  const p=getPlano(planoMes);
+  const p=getPlano(planoMes,CU?.id);
   const totalAp=p.linhas.filter(l=>l.tipo==='aporte').reduce((s,l)=>s+(Number(l.valor)||0),0);
   const totalRe=p.linhas.filter(l=>l.tipo==='resgate').reduce((s,l)=>s+(Number(l.valor)||0),0);
   const capLiq=totalAp-totalRe;
@@ -2567,6 +2583,7 @@ function renderPlano(){
       <button class="plano-month-btn" onclick="navPlanoMes(1)">›</button>
     </div>
     <button class="btn btn-ghost btn-sm" onclick="navPlanoMes(0)">Mês atual</button>
+    ${isGestor()?`<button class="btn btn-ghost btn-sm" onclick="showTeamPlanoSummary()">👥 Ver equipe</button>`:''}
     <button class="btn btn-warning btn-sm" style="margin-left:auto;" onclick="exportPlanoPDF()">📄 Exportar PDF</button>
   </div>
 
@@ -2652,8 +2669,8 @@ function navPlanoMes(dir){
   const d=new Date(y,m-1+dir,1);planoMes=monthKey(d);renderPlano();
 }
 
-function saveMeta(v){const p=getPlano(planoMes);p.meta=parseFloat(v)||0;sP();renderPlano();}
-function savePlanoTexto(v){const p=getPlano(planoMes);p.textoPlan=v;sP();}
+function saveMeta(v){const p=getPlano(planoMes,CU?.id);p.meta=parseFloat(v)||0;sP();renderPlano();}
+function savePlanoTexto(v){const p=getPlano(planoMes,CU?.id);p.textoPlan=v;sP();}
 
 // Plano linhas (aportes/resgates)
 function populatePlanoClientSelect(selId){
@@ -2677,7 +2694,7 @@ function openPlanoLinha(editIdx=-1){
   document.getElementById('plano-linha-title').textContent=editIdx>=0?'Editar Lançamento':'Adicionar Lançamento';
   setPipeline('quente');
   if(editIdx>=0){
-    const l=getPlano(planoMes).linhas[editIdx];
+    const l=getPlano(planoMes,CU?.id).linhas[editIdx];
     const sel=document.getElementById('pl-client');
     for(let i=0;i<sel.options.length;i++)if(sel.options[i].value===l.clientId){sel.selectedIndex=i;break;}
     document.getElementById('pl-produto').value=l.produto||'';
@@ -2702,11 +2719,11 @@ function savePlanoLinha(){
     receita:parseFloat(document.getElementById('pl-receita').value)||0,
     obs:document.getElementById('pl-obs').value.trim(),
     pipeline};
-  const p=getPlano(planoMes);const idx=parseInt(document.getElementById('pl-edit-idx').value);
+  const p=getPlano(planoMes,CU?.id);const idx=parseInt(document.getElementById('pl-edit-idx').value);
   if(idx>=0)p.linhas[idx]=linha;else p.linhas.push(linha);
   sP();closeModal('modal-plano-linha');renderPlano();toast('✅ Lançamento salvo!','success');
 }
-function deletePlanoLinha(idx){const p=getPlano(planoMes);p.linhas.splice(idx,1);sP();renderPlano();}
+function deletePlanoLinha(idx){const p=getPlano(planoMes,CU?.id);p.linhas.splice(idx,1);sP();renderPlano();}
 
 // Plano ações
 function openPlanoAcao(){
@@ -2719,9 +2736,9 @@ function savePlanoAcao(){
   const sel=document.getElementById('pa-client');
   const clientId=sel.value;const clientName=sel.options[sel.selectedIndex]?.text||'';
   const acao={clientId,clientName,produto:document.getElementById('pa-produto').value.trim(),valor:parseFloat(document.getElementById('pa-valor').value)||0,obs:document.getElementById('pa-obs').value.trim()};
-  const p=getPlano(planoMes);p.acoes.push(acao);sP();closeModal('modal-plano-acao');renderPlano();toast('✅ Ação adicionada!','success');
+  const p=getPlano(planoMes,CU?.id);p.acoes.push(acao);sP();closeModal('modal-plano-acao');renderPlano();toast('✅ Ação adicionada!','success');
 }
-function deletePlanoAcao(idx){const p=getPlano(planoMes);p.acoes.splice(idx,1);sP();renderPlano();}
+function deletePlanoAcao(idx){const p=getPlano(planoMes,CU?.id);p.acoes.splice(idx,1);sP();renderPlano();}
 
 // Plano reuniões
 function openPlanoReuniao(){
@@ -2734,9 +2751,9 @@ function savePlanoReuniao(){
   const clientId=sel.value;const clientName=sel.options[sel.selectedIndex]?.text||'';
   const date=document.getElementById('pr-date').value;if(!date){toast('Selecione a data!','error');return;}
   const r={clientId,clientName,date,tipo:document.getElementById('pr-tipo').value,obs:document.getElementById('pr-obs').value.trim()};
-  const p=getPlano(planoMes);p.reunioes.push(r);p.reunioes.sort((a,b)=>a.date.localeCompare(b.date));sP();closeModal('modal-plano-reuniao');renderPlano();toast('✅ Reunião planejada!','success');
+  const p=getPlano(planoMes,CU?.id);p.reunioes.push(r);p.reunioes.sort((a,b)=>a.date.localeCompare(b.date));sP();closeModal('modal-plano-reuniao');renderPlano();toast('✅ Reunião planejada!','success');
 }
-function deletePlanoReuniao(idx){const p=getPlano(planoMes);p.reunioes.splice(idx,1);sP();renderPlano();}
+function deletePlanoReuniao(idx){const p=getPlano(planoMes,CU?.id);p.reunioes.splice(idx,1);sP();renderPlano();}
 
 // ── EQUIPE ──
 function renderEquipe(){
@@ -2756,10 +2773,45 @@ function renderEquipe(){
       <div class="mstat" style="grid-column:span 2"><div class="mstat-val" style="font-size:0.82rem;">${fmtMS(pat)}</div><div class="mstat-lbl">AUM</div></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px;font-size:0.72rem;"><span style="color:var(--green);">🏆 ${ganhos} ganhos</span><span style="color:var(--red);">❌ ${perdidos} perdidos</span>${overdue?`<span style="color:var(--red);">⚠️ ${overdue} atrasados</span>`:''}</div>
-    <div class="member-actions"><button class="btn btn-ghost btn-sm" onclick="viewMemberData('${u.id}')">👁 Carteira</button>${u.id!==CU.id?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑</button>`:''}</div></div>`;
+    <div class="member-actions"><button class="btn btn-ghost btn-sm" onclick="viewMemberData('${u.id}')">👁 Carteira</button><button class="btn btn-ghost btn-sm" onclick="viewMemberPlano('${u.id}')">🎯 Plano</button>${u.id!==CU.id?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑</button>`:''}</div></div>`;
   }).join('');
 }
 function viewMemberData(uid2){relOwnerFilter=uid2;kanbanOwnerFilter=uid2;navigate('relacionamento');}
+function viewMemberPlano(uid2){
+  // Temporarily switch view to show that member's plano
+  const u=gUB(uid2);
+  if(!u){toast('Assessor não encontrado','error');return;}
+  // Show a summary modal of their plano
+  const userPlanos=getPlanoForUser(uid2);
+  const mesKeys=Object.keys(userPlanos).sort().reverse().slice(0,6);
+  if(!mesKeys.length){toast(`${u.name} não tem planos registrados ainda.`,'info');return;}
+  const rows=mesKeys.map(mk=>{
+    const p=userPlanos[mk];
+    const ap=(p.linhas||[]).filter(l=>l.tipo==='aporte').reduce((s,l)=>s+(Number(l.valor)||0),0);
+    const re=(p.linhas||[]).filter(l=>l.tipo==='resgate').reduce((s,l)=>s+(Number(l.valor)||0),0);
+    const liq=ap-re;
+    return`<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-size:0.8rem;">${monthLabel(mk)}</td>
+      <td style="padding:8px 12px;font-size:0.8rem;color:var(--green);">${fmtM(ap)}</td>
+      <td style="padding:8px 12px;font-size:0.8rem;color:var(--red);">${fmtM(re)}</td>
+      <td style="padding:8px 12px;font-size:0.8rem;font-weight:600;color:${liq>=0?'var(--green)':'var(--red)'};">${liq>=0?'+':''}${fmtM(liq)}</td>
+      <td style="padding:8px 12px;font-size:0.8rem;color:var(--yellow);">${p.meta?fmtM(p.meta):'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ev-title').textContent=`🎯 Plano Mensal — ${u.name}`;
+  document.getElementById('ev-body').innerHTML=`
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="background:var(--bg3);">
+        <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--text3);">Mês</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--text3);">Aportes</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--text3);">Resgates</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--text3);">Líquido</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--text3);">Meta</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  openModal('modal-event');
+}
 function deleteUser(uid2){
   const u=gUB(uid2);
   document.getElementById('confirm-msg').textContent=`Remover "${u?.name}"? Dados apagados.`;
@@ -2963,12 +3015,12 @@ function renderClientTags(tags){
 }
 
 // ── ROTEIRO DO DIA ──
-const ROTEIRO_KEY=()=>`roteiro_${now()}`;
+const ROTEIRO_KEY=()=>`roteiro_${CU?.id||'u'}_${now()}`;
 let roteiroState={};
 
 function loadRoteiroState(){
   const k=ROTEIRO_KEY();
-  const raw=localStorage.getItem('icrm_roteiro_v6');
+  const raw=localStorage.getItem('icrm_roteiro_v6_'+(CU?.id||'u'));
   roteiroState=raw?JSON.parse(raw):{};
   return roteiroState[k]||{done:[]};
 }
@@ -2978,13 +3030,13 @@ function saveRoteiroState(dayState){
   // Keep only last 30 days
   const keys=Object.keys(roteiroState).sort().reverse();
   keys.slice(30).forEach(old=>delete roteiroState[old]);
-  localStorage.setItem('icrm_roteiro_v6',JSON.stringify(roteiroState));
+  localStorage.setItem('icrm_roteiro_v6_'+(CU?.id||'u'),JSON.stringify(roteiroState));
 }
 
 function buildRoteiroItems(){
   const clients=isGestor()?allClients():state.clients;
   const leads=isGestor()?allLeads():state.leads;
-  const plano=getPlano(planoMes);
+  const plano=getPlano(planoMes,CU?.id);
   const items=[];
 
   // 1. Clientes com contato MUITO atrasado (>30 dias além do prazo) → URGENTE
@@ -3368,15 +3420,15 @@ function getWeekRange(offset){
 }
 
 function loadChecklistState(key){
-  const raw=localStorage.getItem('icrm_checklist_v6');
+  const raw=localStorage.getItem('icrm_checklist_v6_'+(CU?.id||'u'));
   const all=raw?JSON.parse(raw):{};
   return all[key]||{done:[]};
 }
 function saveChecklistState(key,st){
-  const raw=localStorage.getItem('icrm_checklist_v6');
+  const raw=localStorage.getItem('icrm_checklist_v6_'+(CU?.id||'u'));
   const all=raw?JSON.parse(raw):{};
   all[key]=st;
-  localStorage.setItem('icrm_checklist_v6',JSON.stringify(all));
+  localStorage.setItem('icrm_checklist_v6_'+(CU?.id||'u'),JSON.stringify(all));
 }
 
 function buildChecklistItems(weekRange){
@@ -3400,7 +3452,7 @@ function buildChecklistItems(weekRange){
   });
 
   // Plano reuniões da semana
-  const plano=getPlano(planoMes);
+  const plano=getPlano(planoMes,CU?.id);
   plano.reunioes.filter(r=>{
     const rd=new Date(r.date);
     return rd>=weekRange.mon&&rd<=weekRange.sun;
@@ -3705,7 +3757,7 @@ function deleteNota(idx){
 
 // ── PDF PLANO MENSAL ──
 function exportPlanoPDF(){
-  const p=getPlano(planoMes);
+  const p=getPlano(planoMes,CU?.id);
   const totalAp=p.linhas.filter(l=>l.tipo==='aporte').reduce((s,l)=>s+(Number(l.valor)||0),0);
   const totalRe=p.linhas.filter(l=>l.tipo==='resgate').reduce((s,l)=>s+(Number(l.valor)||0),0);
   const capLiq=totalAp-totalRe;
@@ -4559,12 +4611,14 @@ const SN_DEFAULTS = {
   inativoAbaixo: 1000,
 };
 
-function loadSnConfig() {
-  const raw = localStorage.getItem(SK_SN);
+function loadSnConfig(uid2) {
+  const k=SK_SN+'_'+(uid2||CU?.id||'default');
+  const raw = localStorage.getItem(k);
   return raw ? { ...SN_DEFAULTS, ...JSON.parse(raw) } : { ...SN_DEFAULTS };
 }
 function saveSnConfigData(cfg) {
-  localStorage.setItem(SK_SN, JSON.stringify(cfg));
+  const k=SK_SN+'_'+(CU?.id||'default');
+  localStorage.setItem(k, JSON.stringify(cfg));
 }
 
 // ── CLASSIFY CLIENT ──
@@ -5506,6 +5560,41 @@ function openGrupoWA(grupoId){
   }
 }
 
+
+function showTeamPlanoSummary(){
+  const rows=users.map(u=>{
+    const p=getPlano(planoMes,u.id);
+    const ap=(p.linhas||[]).filter(l=>l.tipo==='aporte').reduce((s,l)=>s+(Number(l.valor)||0),0);
+    const re=(p.linhas||[]).filter(l=>l.tipo==='resgate').reduce((s,l)=>s+(Number(l.valor)||0),0);
+    const liq=ap-re;
+    const meta=Number(p.meta)||0;
+    const pct=meta>0?Math.round(liq/meta*100):0;
+    return`<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:9px 12px;font-size:0.8rem;font-weight:500;">${u.name}</td>
+      <td style="padding:9px 12px;font-size:0.8rem;color:var(--green);">${fmtM(ap)}</td>
+      <td style="padding:9px 12px;font-size:0.8rem;color:var(--red);">${fmtM(re)}</td>
+      <td style="padding:9px 12px;font-size:0.8rem;font-weight:600;color:${liq>=0?'var(--green)':'var(--red)'};">${liq>=0?'+':''}${fmtM(liq)}</td>
+      <td style="padding:9px 12px;font-size:0.8rem;color:var(--yellow);">${meta?fmtM(meta):'—'}</td>
+      <td style="padding:9px 12px;font-size:0.8rem;color:${pct>=100?'var(--green)':pct>=70?'var(--yellow)':'var(--red)'};">${meta?pct+'%':'—'}</td>
+      <td style="padding:9px 12px;"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-event');viewMemberPlano('${u.id}')">Ver</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ev-title').textContent=`👥 Resumo da Equipe — ${monthLabel(planoMes)}`;
+  document.getElementById('ev-body').innerHTML=`
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="background:var(--bg3);">
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">Assessor</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">Aportes</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">Resgates</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">Líquido</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">Meta</th>
+        <th style="padding:8px 12px;text-align:left;font-size:0.72rem;color:var(--text3);">%</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  openModal('modal-event');
+}
 // ── BOOTSTRAP ──
 
 // ── MISSING FUNCTIONS FIX ──
